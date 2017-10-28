@@ -13,5 +13,7 @@ embedded system to achieve the requirements.
 
 ## Links
 [Google Drive Project Folder](https://drive.google.com/open?id=0B2l6aGQKjH7aZUhtRnp3U2lGZUk)
+
 [Source Control with CCS Tutorial](http://processors.wiki.ti.com/index.php/Source_control_with_CCS)
+
 [README File Syntax Guide](https://help.github.com/articles/basic-writing-and-formatting-syntax/)
