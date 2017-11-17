@@ -35,6 +35,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * --/COPYRIGHT--*/
 #include <stdint.h>
+#include "sensors.h"
 
 /* Forward declaration of the default fault handlers. */
 static void resetISR(void);
@@ -119,7 +120,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* DMA_INT1 ISR              */
     defaultISR,                             /* DMA_INT0 ISR              */
     defaultISR,                             /* PORT1 ISR                 */
-    defaultISR,                             /* PORT2 ISR                 */
+    PORT2_IRQHandler,                       /* PORT2 ISR                 */
     defaultISR,                             /* PORT3 ISR                 */
     defaultISR,                             /* PORT4 ISR                 */
     defaultISR,                             /* PORT5 ISR                 */

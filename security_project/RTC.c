@@ -2,17 +2,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "RTC.h"
-#include "keypad.h"
-
-const eUSCI_I2C_MasterConfig i2cConfig = {
-    EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-    3000000,                                // SMCLK = 3MHz
-    EUSCI_B_I2C_SET_DATA_RATE_100KBPS,      // Desired I2C Clock of 400khz
-    0,                                      // No byte counter threshold
-    EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
-};
-
-unsigned char calendar[13];
 int month_flag=0;
 int day_flag=0;
 int year_flag=0;
@@ -21,6 +10,42 @@ int hour_flag=0;
 int min_flag=0;
 int sec_flag=0;
 short temp=0;
+const eUSCI_I2C_MasterConfig i2cConfig = {
+EUSCI_B_I2C_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
+        3000000,                                // SMCLK = 3MHz
+        EUSCI_B_I2C_SET_DATA_RATE_100KBPS,      // Desired I2C Clock of 400khz
+        0,                                      // No byte counter threshold
+        EUSCI_B_I2C_NO_AUTO_STOP                // No Autostop
+        };
+
+//Tera term configuration
+const eUSCI_UART_Config uartConfig =
+ {
+        EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
+         26,                                      // BRDIV = 26
+         0,                                       // UCxBRF = 0
+         0,                                       // UCxBRS = 0
+         EUSCI_A_UART_NO_PARITY,                  // No Parity
+         EUSCI_A_UART_LSB_FIRST,                  // MSB First
+         EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
+         EUSCI_A_UART_MODE,                       // UART mode
+         EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION  // Low Frequency Mode
+ };
+
+
+
+void uart_init()
+{
+    /* Selecting P1.2 and P1.3 in UART mode. */
+    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
+        GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
+
+    /* Configuring UART Module */
+    MAP_UART_initModule(EUSCI_A0_BASE, &uartConfig);
+
+    /* Enable UART module */
+    MAP_UART_enableModule(EUSCI_A0_BASE);
+}
 
 void I2C_init() //EGR 326 lecture slide
 {
@@ -47,6 +72,32 @@ void I2C_init() //EGR 326 lecture slide
  */
 void Init_RTC(){
     I2C_init();
+}
+
+void Port4_Initb() // Initiate port pin 1.0 as input with internal pull up resistor
+{
+    int i;
+    for (i=0;i<4;i++)
+    {
+        P4SEL0 &= ~BIT(i);
+        P4SEL1 &= ~BIT(i); // 1) configure P4.0 4.1 4.2 4.3 as GPIO
+        P4DIR &= ~BIT(i); // 2) make P4.0 4.1 4.2 4.3 inputs
+        P4REN |= BIT(i); // 3) enable pull resistors on P4.0 4.1 4.2 4.3
+        P4OUT |= BIT(i); // P4.0 4.1 4.2 4.3 are pull-up
+    }
+
+}
+
+void user_prompt(){
+    printf("\n\rPlease set up your time for the Real Time Clock (RTC) as instructed");
+    printf("\n\rFor Month - Enter values from 01-12 representing January to December respectfully ");
+    printf("\n\rFor Day - Enter values from 01-31 representing the date of the month");
+    printf("\n\rFor Year - Enter values from 00-99 representing the last two digits of the year");
+    printf("\n\rFor Day of the week - Enter values from 1-7 representing Sunday to Saturday respectfully");
+    printf("\n\rFor Hour - Enter values from 00-24 representing the hour");
+    printf("\n\rFor Minute - Enter values from 00-60 representing the minute");
+    printf("\n\rFor Second- Enter values from 00-60 representing the second");
+    printf("\n\r************************************************************************************************");
 }
 
 void date_set() //asking user to using keypad to set the time
@@ -196,29 +247,29 @@ void date_set() //asking user to using keypad to set the time
 void ck_valid()
 { //Maximum calendar: 1 2 3 1 9 9  7  2 3 5   9    5    9
   //                  M M D D Y Y DOW H H min min  sec  sec
-    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12)
+    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12 && calendar[0]!='*' &&calendar[1]!='*')
     {
-        month_flag = 1;
+        month_flag = 1; //valid
     }
-    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31)
+    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31&& calendar[2]!='*' &&calendar[3]!='*')
     {
         day_flag = 1;
     }
 
-    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99)
+    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99 && calendar[4]!='*' &&calendar[5]!='*')
     {
         year_flag = 1;
     }
-    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1)
+    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[4]!='*' &&calendar[5]!='*')
     {
         DOW_flag = 1;
     }
 
-    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24)
+    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[4]!='*' &&calendar[5]!='*')
     {
         hour_flag = 1;
     }
-    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60)
+    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60&& calendar[4]!='*' &&calendar[5]!='*')
     {
         min_flag = 1;
     }

@@ -460,4 +460,6 @@ void Output_On(void);
 // Output: none
 void Output_Color(uint32_t newColor);
 
+uint32_t ST7735_DrawString2(uint16_t x, uint16_t y, char *pt, int16_t textColor, int16_t bgColor);
+
 #endif

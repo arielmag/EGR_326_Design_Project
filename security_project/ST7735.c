@@ -1067,6 +1067,47 @@ void ST7735_DrawCharS(int16_t x, int16_t y, char c, int16_t textColor, int16_t b
   }
 }
 
+//------------ST7735_DrawCharS------------
+// Simple character draw function.  This is the same function from
+// Adafruit_GFX.c but adapted for this processor.  However, each call
+// to ST7735_DrawPixel() calls setAddrWindow(), which needs to send
+// many extra data and commands.  If the background color is the same
+// as the text color, no background will be printed, and text can be
+// drawn right over existing images without covering them with a box.
+// Requires (11 + 2*size*size)*6*8 bytes of transmission (image fully on screen; textcolor != bgColor)
+// Input: x         horizontal position of the top left corner of the character, columns from the left edge
+//        y         vertical position of the top left corner of the character, rows from the top edge
+//        c         character to be printed
+//        textColor 16-bit color of the character
+//        size      number of pixels per character pixel (e.g. size==2 prints each pixel of font as 2x2 square)
+// Output: none
+// DOES NOT FILL IN BACKGROUND OF CHARACTER
+void ST7735_DrawCharS2(int16_t x, int16_t y, char c, int16_t textColor, uint8_t size){
+  uint8_t line; // vertical column of pixels of character in font
+  int32_t i, j;
+  if((x >= _width)            || // Clip right
+     (y >= _height)           || // Clip bottom
+     ((x + 6 * size - 1) < 0) || // Clip left
+     ((y + 8 * size - 1) < 0))   // Clip top
+    return;
+
+  for (i=0; i<6; i++ ) {
+    if (i == 5)
+      line = 0x0;
+    else
+      line = Font[(c*5)+i];
+    for (j = 0; j<8; j++) {
+      if (line & 0x1) {
+        if (size == 1) // default size
+          ST7735_DrawPixel(x+i, y+j, textColor);
+        else {  // big size
+          ST7735_FillRect(x+(i*size), y+(j*size), size, size, textColor);
+        }
+      }
+      line >>= 1;
+    }
+  }
+}
 
 //------------ST7735_DrawChar------------
 // Advanced character draw function.  This is similar to the function
@@ -1144,6 +1185,29 @@ uint32_t ST7735_DrawString(uint16_t x, uint16_t y, char *pt, int16_t textColor){
   return count;  // number of characters printed
 }
 
+//------------ST7735_DrawString 2------------
+// String draw function.
+// 16 rows (0 to 15) and 21 characters (0 to 20)
+// Requires (11 + size*size*6*8) bytes of transmission for each character
+// Input: x         columns from the left edge (0 to 20)
+//        y         rows from the top edge (0 to 15)
+//        pt        pointer to a null terminated string to be printed
+//        textColor 16-bit color of the characters
+//        bgColor   16-bit color of the background
+// bgColor is Black and size is
+// Output: number of characters printed
+uint32_t ST7735_DrawString2(uint16_t x, uint16_t y, char *pt, int16_t textColor, int16_t bgColor){
+  uint32_t count = 0;
+  if(y>15) return 0;
+  while(*pt){
+    ST7735_DrawCharS2(x*6, y*10, *pt, textColor, 2);
+    pt++;
+    x = x+2;
+    if(x>20) return count;  // number of characters printed
+    count++;
+  }
+  return count;  // number of characters printed
+}
 
 //-----------------------fillmessage-----------------------
 // Output a 32-bit number in unsigned decimal format

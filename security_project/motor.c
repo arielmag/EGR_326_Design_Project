@@ -2,6 +2,47 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdint.h>
+#include "sensors.h"
+
+#define LOCK_SPEED 2 // Speed that the door locks/unlocks
+
+int lock = 0;
+
+/*
+ * Get the locked/unlocked status of the door
+ * @return 1 locked, 0 unlocked
+ */
+int get_lock(){
+    return lock;
+}
+
+/*
+ * Set the locked/unlocked status of the door
+ * @param status 1 locked, 0 unlocked
+ */
+void set_lock(int status){
+    lock = status;
+}
+
+/*
+ * Lock or unlock the door by turning the motor and setting the lock flag. If the door is
+ * open, it will not lock and a warning message will display.
+ */
+void lock_unlock_door(){
+    if(get_lock()){ // If door is locked, unlock
+        full_step_reverse(LOCK_SPEED);
+        set_lock(!get_lock()); // Set flag to unlocked
+
+    }else{ // Otherwise, turn the other way to lock
+        if(get_door_status() == CLOSED){ // Only lock if the door is closed
+            full_step(LOCK_SPEED);
+            set_lock(!get_lock()); // Set flag to locked
+        }else{
+            // TODO print "Door is open. Close door and try again."
+            // delay, and then go back to menu
+        }
+    }
+}
 
 /*
  * Initialize pins for the motor

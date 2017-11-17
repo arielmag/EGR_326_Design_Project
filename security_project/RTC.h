@@ -8,7 +8,11 @@ uint8_t read_back_data[36]; // array to hold values read back from flash
 unsigned char date[15]; //manually set at RTC_write for debug
 void uart_init();
 void I2C_init();
+void Port4_Initb();
+void user_prompt();
 void date_set();
+char keypad_getkey();
+int debounce(int row);
 void ck_valid();
 void printDay(char day);
 void printMonth(char month);
@@ -20,6 +24,7 @@ void printDate();
 void printTime();
 void RTC_write();
 void printDateTimeStored(int num_dates_stored);
+unsigned char calendar[13];
 void Init_RTC();
 
 #endif
