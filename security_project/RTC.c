@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "RTC.h"
-
 int month_flag=0;
 int day_flag=0;
 int year_flag=0;
@@ -236,87 +235,32 @@ void date_set() //asking user to using keypad to set the time
 
 }
 
-char keypad_getkey() //EGR 326 Lecture
-{
-    do{
-                     // assumes port 4 bits 0-3 are connected to rows
-       int row, col; // bits 4,5,6 are connected to columns
-
-           const char column_select[] = {0x10, 0x20, 0x40}; // one column is active
-           // Activates one column at a time, read the input to see which column
-
-           for (col = 0; col < 3; col++) {
-           P4->DIR &= ~0xF0; // disable all columns, aka set them as input
-           P4->DIR |= column_select[col]; // enable one column at a time
-           P4->OUT &= ~column_select[col]; // drive the active output column to low
-           __delay_cycles(10); // wait for signal to settle
-           row = P4->IN & 0x0F; // read all rows
-
-           if(row != 0x0F){ // if one input is pressed, go into debounce sequence
-               while(!debounce(row)); // loop until read 4 new consecutive inputs (0)
-               P4->OUT |= column_select[col]; // drive active column high
-               break;
-           }
-           P4->OUT |= column_select[col]; // drve the active column high
-           }
-
-           P4->OUT |= 0xF0; // drive all columns high before disable
-           P4->DIR &= ~0xF0; // disable all columns
-
-           if (row == 0x0E) return  (48+col + 1); // key in row 0  +48 for converting int to ACII char
-           if (row == 0x0D) return (48+3 + col + 1); // key in row 1
-           if (row == 0x0B) return (48+6 + col + 1); // key in row 2
-           if (row == 0x07)
-           {
-               if(col==0)                return '*';
-
-               if(col==1)                return '0';
-
-               if(col==2)                return '#';
-           }
-       }while(1);
-}
-
-int debounce(int row)
-{
-    static uint16_t State = 0;  // Current debounce status
-    int select = 4; // Initialize as unused value for debugging
-
-    if (row == 0x0E) select = 0;
-    if (row == 0x0D) select = 1;
-    if (row == 0x0B) select = 2;
-    if (row == 0x07) select = 3;
-
-    State = (State << 1) | (P4IN & BIT(select))>>select | 0xff00;    // Read switch
-    return (State == 0xffff); // Return true if button released for 8 consecutive calls
-}
-
 void ck_valid()
 { //Maximum calendar: 1 2 3 1 9 9  7  2 3 5   9    5    9
   //                  M M D D Y Y DOW H H min min  sec  sec
-    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12)
+    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12 && calendar[0]!='*' &&calendar[1]!='*')
     {
-        month_flag = 1;
+        month_flag = 1; //valid
     }
-    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31)
+    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31&& calendar[2]!='*' &&calendar[3]!='*')
     {
         day_flag = 1;
     }
 
-    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99)
+    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99 && calendar[4]!='*' &&calendar[5]!='*')
     {
         year_flag = 1;
     }
-    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1)
+    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[4]!='*' &&calendar[5]!='*')
     {
         DOW_flag = 1;
     }
 
-    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24)
+    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[4]!='*' &&calendar[5]!='*')
     {
         hour_flag = 1;
     }
-    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60)
+    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60&& calendar[4]!='*' &&calendar[5]!='*')
     {
         min_flag = 1;
     }

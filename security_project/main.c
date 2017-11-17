@@ -60,6 +60,7 @@
 #include "ST7735.h"
 #include "RTC.h"
 #include "LCD.h"
+#include "keypad.h"
 
 
 void Init48MHz();
@@ -74,16 +75,20 @@ int main(void)
     Init48MHz(); //initialize 48MHz
     ST7735_InitR(INITR_REDTAB); // Initialize for drawing functions, once for the program
     SysTick_Init();
+    Init_keypad();
 
-    display_home_screen();
-    cas_sysDelay(1);
-    display_set_password();
-    cas_sysDelay(1);
-    display_enter_password();
-    cas_sysDelay(1);
-    display_set_time_date();
-    cas_sysDelay(1);
+//    display_home_screen();
+//    cas_sysDelay(1);
+//    display_set_password();
+//    cas_sysDelay(1);
+//    display_enter_password();
+//    cas_sysDelay(1);
+//    display_set_time_date();
+//    cas_sysDelay(1);
     display_menu();
+//   set_time_date();
+//    display_set_time_date();
+//    set_time_date();
     while(1)
     {
         
