@@ -30,11 +30,9 @@ void display_unlocked();
 void display_arm_disarm_log();
 void display_trigger_log();
 void go_home();
-
+void check_sensors();
 char default_password[] = {'a', 'a', 'a', 'a'}; // Default password for the system
 char saved_password[4]; // 4-digit password for system
-char enter_key = '#'; // Key to set as enter button
-char home_key = '*'; // Key to set as home key
 
 int main(void)
 {
@@ -49,7 +47,7 @@ int main(void)
     Init_alarm();               // Initialize alarm
     SysTick_Init();
 
-/*
+
     reset_system(); // This function causes the system to be reset.
                     // It should be run the first time this program is being set up
                     // to trigger events for user to set up time and password.
@@ -58,9 +56,6 @@ int main(void)
     if(check_reset()){          // Check if system is reset
         setup_system();         // Let the user setup time and password
     }
-*/
-
-
 
     // If system already setup
     go_home();
@@ -72,7 +67,7 @@ int main(void)
  */
 void go_home(){
     display_home_screen();      // Display screen for home
-    while(keypad_getkey() != enter_key);    // Wait for user to press enter to switch screens
+    while(keypad_getkey() != ENTER_KEY);    // Wait for user to press enter to switch screens
     enter_password();       // Prompt user to enter password
 
     while(1){
@@ -175,27 +170,47 @@ void setup_password(){
      * Set up the security system by creating a four-digit password.
      * ****
      */
-    int i;
+    ST7735_FillScreen(0);    // set screen to black
+    uint16_t x=0, y=0;
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLACK;
+    ST7735_DrawString2(x, y, "Setup", textColor, bgColor);
+    ST7735_DrawString2(x, y+=2, "Password", textColor, bgColor);
+    ST7735_DrawString(x, y+=2, "Set up the system by", textColor);
+    ST7735_DrawString(x, y+=1, "creating a 4-digit", textColor);
+    ST7735_DrawString(x, y+=1, "password.", textColor);
 
+    int i;
+    x=20,y=80;
     for(i=0; i<4; i++){
         // Don't count * or # keypad entries as a digit
         do{
             saved_password[i] = keypad_getkey();
-        }while(saved_password[i] == '*' || saved_password[i] == '#');
-        // print '*'
+
+        }while(saved_password[i] == ENTER_KEY || saved_password[i] == HOME_KEY);
+
+        // Display * as password characters are typed
+        ST7735_DrawCharS(x, y, '*', textColor, bgColor, 2);
+        x+=25;
     }
 
-    //TODO
-    /*
-     * Re-Enter your password
-     */
+    ST7735_FillScreen(0);    // set screen to black
+    x=0, y=0;
+    ST7735_DrawString2(x, y, "Verify", textColor, bgColor);
+    ST7735_DrawString2(x, y+=2, "Password", textColor, bgColor);
+    ST7735_DrawString(x, y+=2, "Re-enter your 4-digit", textColor);
+    ST7735_DrawString(x, y+=1, "password.", textColor);
 
     // Check for re-entry
-    while(!verify_entry());
-
-    /*
-     * Password saved
-     */
+    while(!verify_entry(1)){
+        ST7735_FillScreen(0);    // set screen to black
+        x=0, y=0;
+        ST7735_DrawString2(x, y, "Verify", textColor, bgColor);
+        ST7735_DrawString2(x, y+=2, "Password", textColor, bgColor);
+        int16_t textColor = ST7735_RED;
+        ST7735_DrawString(x, y+=2, "Password incorrect,", textColor);
+        ST7735_DrawString(x, y+=1, "try again.", textColor);
+    }
 }
 
 /*
@@ -207,21 +222,16 @@ void enter_password(){
     uint16_t x=0, y=0;
     int16_t textColor = ST7735_WHITE;
     int16_t bgColor = ST7735_BLACK;
-    char titleString[] = "Enter ";
-    ST7735_DrawString2(x, y, titleString, textColor, bgColor);
-    x=0, y=2;
-    char titleString2[] = "Password";
-    ST7735_DrawString2(x, y, titleString2, textColor, bgColor);
-    y+=10;
-    /*
-    char descrptionString[] = "Enter your 4-digit password.";
-    ST7735_DrawString(x, y, descriptionString, textColor);
-    */
-    while(!verify_entry()){ // Check if the user entered the saved password
-        // TODO: Display message on LCD saying the password entered did not match, try again
-        /*
-         * Password incorrect, try again.
-         */
+    ST7735_DrawString2(x, y, "Password", textColor, bgColor);
+    ST7735_DrawString(x, y+=2, "Please enter your", textColor);
+    ST7735_DrawString(x, y+=1, "4-digit password.", textColor);
+    while(!verify_entry(0)){ // Check if the user entered the saved password
+        x=0, y=0;
+        ST7735_FillScreen(0);    // set screen to black
+        ST7735_DrawString2(x, y, "Password", textColor, bgColor);
+        int16_t textColor = ST7735_RED;
+        ST7735_DrawString(x, y+=2, "Password incorrect,", textColor);
+        ST7735_DrawString(x, y+=1, "try again.", textColor);
     }
 }
 
@@ -229,12 +239,13 @@ void enter_password(){
  * This function gets user entry for a 4-digit password and checks it against the
  * saved password.
  *
+ * @param isFirstSetup 1 if it is the first time setting up the system, 0 if not
  * @return 1 if the saved password was entered, 0 if incorrect
  */
-int verify_entry(){
+int verify_entry(int isFirstSetup){
     char typed_password[4];
     int i, is_verified = 1;
-    int16_t x=20,y=60;
+    int16_t x=20,y=80;
     int16_t textColor = ST7735_WHITE;
     int16_t bgColor = ST7735_BLACK;
 
@@ -243,12 +254,18 @@ int verify_entry(){
         // Don't count * or # keypad entries as a digit
         do{
             typed_password[i] = keypad_getkey();
-        }while(typed_password[i] == '*' || typed_password[i] == '#');
 
-        // TODO: Display '*'
+            // If the user presses home and this is not the first time setting up the system, go home
+            if(typed_password[i] == HOME_KEY && !isFirstSetup)
+                go_home();
 
+        }while(typed_password[i] == ENTER_KEY || typed_password[i] == HOME_KEY);
+
+        // Display * as password characters are typed
         ST7735_DrawCharS(x, y, '*', textColor, bgColor, 2);
         x+=25;
+
+        // Check if character matches saved password
         if(typed_password[i] != saved_password[i])
             is_verified = 0;
 
@@ -287,7 +304,7 @@ void display_menu(){
 
         // 3 to check sensors
         case '3':
-            arm_disarm_alarm();
+            check_sensors();
             break;
 
         // 4 to view log
@@ -358,3 +375,15 @@ void display_trigger_log(){
 
 }
 
+/*
+ * Display the status of each of the sensors in the format:
+ *
+ * Sensor Status
+ * Door             OPEN
+ * Window           CLOSED
+ * Temperature      79 F
+ * Presence         DETECTED
+ */
+void check_sensors(){
+
+}
