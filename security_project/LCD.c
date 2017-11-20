@@ -6,6 +6,8 @@
 #include "ST7735.h"
 #include "timers.h"
 #include <string.h>
+#include "keypad.h"
+#include "alarm.h"
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -534,12 +536,17 @@ void display_menu_LCD()
           {
               ST7735_DrawChar(x+(i*8), y, string1[i], ST7735_Color565(180, 240, 250), 0, 1);
           }
+
           y+=20;
+          ST7735_DrawString(1,2, get_armed() ? "2. DISARM ALARM" : "2. ARM ALARM",ST7735_Color565(180, 240, 250));
+          /*
           char string2[]={'2','.','A','R','M','/','D','I','S','A','R','M'};    //Eventually display date information here
           for(i=0; i<12; i++)
           {
               ST7735_DrawChar(x+(i*8), y, string2[i], ST7735_Color565(180, 240, 250), 0, 1);
           }
+          */
+
           y+=20;
           char string3[]={'3','.','C', 'H', 'E','C','K',' ','S','E','N','S','O','R'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
           for(i=0; i<14; i++){
@@ -569,4 +576,80 @@ void display_menu_LCD()
 }
 void clearScreen(){
     ST7735_FillScreen(0x0000);            // set screen to black
+}
+
+void ck_valid()
+{ //Maximum calendar: 1 2 3 1 9 9  7  2 3 5   9    5    9
+  //                  M M D D Y Y DOW H H min min  sec  sec
+    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12 && calendar[0]!='*' &&calendar[1]!='*')
+    {
+        month_flag = 1; //valid
+    }
+    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31&& calendar[2]!='*' &&calendar[3]!='*')
+    {
+        day_flag = 1;
+    }
+
+    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99 && calendar[4]!='*' &&calendar[5]!='*')
+    {
+        year_flag = 1;
+    }
+    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[4]!='*' &&calendar[5]!='*')
+    {
+        DOW_flag = 1;
+    }
+
+    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[4]!='*' &&calendar[5]!='*')
+    {
+        hour_flag = 1;
+    }
+    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60&& calendar[4]!='*' &&calendar[5]!='*')
+    {
+        min_flag = 1;
+    }
+
+    if (((calendar[11] - 48) * 10 + (calendar[12] - 48)) < 60)
+    {
+        sec_flag = 1;
+    }
+
+}
+
+void reset_flag() //reset input checking flags
+{
+     month_flag=0;
+     day_flag=0;
+     year_flag=0;
+     DOW_flag=0;
+     hour_flag=0;
+     min_flag=0;
+     sec_flag=0;
+}
+
+void arm_error_LCD(){
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_RED;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString_bg(2,y, "Cannot arm system.", textColor, bgColor);
+    ST7735_DrawString_bg(2,y+=2, "Clear all triggers", textColor, bgColor);
+    ST7735_DrawString_bg(3,y+=1, "then try again.", textColor, bgColor);
+}
+
+void arm_success_LCD(){
+    int16_t textColor = ST7735_BLACK;
+    int16_t bgColor = ST7735_GREEN;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString2(5,y, "System", textColor, bgColor);
+    ST7735_DrawString2(6,y+3, "Armed", textColor, bgColor);
+}
+
+void disarm_success_LCD(){
+    int16_t textColor = ST7735_BLACK;
+    int16_t bgColor = ST7735_GREEN;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString2(5,y, "System", textColor, bgColor);
+    ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
 }

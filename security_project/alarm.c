@@ -3,18 +3,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "keypad.h"
+#include "sensors.h"
+#include "RTC.h"
+#include "LCD.h"
+#include "timers.h"
 
 // Flag for if alarm is armed/diarmed
 int isArmed = 0;
 
-int isTriggered = 0;
-
 /*
- * Initialize the alarm by setting the system to disarmed and clearing triggers.
+ * Initialize the alarm by setting the system to disarmed.
  */
 void Init_alarm(){
     isArmed = 0; // Disarm system
-    set_triggered(0); // Remove triggers
 }
 
 /*
@@ -24,33 +25,17 @@ void Init_alarm(){
  *           system was not armed
  */
 int arm_disarm_alarm(){
-    // Arm the system if currently disarmed, disarm the system if armed and not triggered
-    if(get_armed() == 0 || (get_armed() == 1) && (get_triggered() == NONE)){
+    // Arm the system if currently disarmed and not triggered, disarm the system if armed
+    if(get_armed() || (!get_armed() && !get_triggered())){
         set_armed(!get_armed());
         log_arm_disarm_time();
-        // TODO print "System is armed/disarmed."
-        // delay, then return to menu
+        get_armed() ? arm_success_LCD() : disarm_success_LCD();
+        cas_sysDelay(2);
         return 1;
     }
 
-    // If trying to arm the system but there is a trigger
-    // TODO print "Unable to arm alarm. Please "
-    switch(get_triggered()){
-        case DOOR:
-            // TODO print "close door"
-            break;
-        case WINDOW:
-            // TODO print "close window"
-            break;
-        case TEMPERATURE:
-            // TODO print "lower temperature"
-            break;
-        case PRESENCE:
-            // TODO print "move away from presence detector"
-            break;
-    }
-    // TODO print "then try again. Press any button to continue."
-    while(keypad_getkey());
+    arm_error_LCD();
+    cas_sysDelay(2);
     return 0;
 }
 
@@ -105,26 +90,9 @@ int get_armed(){
 }
 
 /*
- * This function sets the status of the alarm trigger
- * @param triggerType 0 not triggered
- *                    1 door open
- *                    2 window open
- *                    3 temperature >100 F
- *                    4 presence
- */
-void set_triggered(int triggerType){
-    isTriggered = triggerType;
-    if(triggerType != NONE)
-        log_trigger_time();
-}
-
-/*
  * This function gets the status of the alarm trigger
- * @return 0 not triggered
- *         1 door open
- *         2 window open
- *         3 temperature >100 F
+ * @return 1 triggered 0 not triggered
  */
 int get_triggered(){
-    return isTriggered;
+    return (check_PIR() || get_door_status() || get_window_status() || abs(RTC_read_temperature() - 110) > 0.01 );
 }

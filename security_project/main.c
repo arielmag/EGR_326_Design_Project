@@ -4,6 +4,8 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
 
 /* Custom Includes */
 #include "alarm.h"
@@ -46,7 +48,6 @@ int main(void)
     Init_LCD();                 // Initialize ports for the LCD
     Init_alarm();               // Initialize alarm
     SysTick_Init();
-
 
     reset_system(); // This function causes the system to be reset.
                     // It should be run the first time this program is being set up
@@ -300,6 +301,7 @@ void display_menu(){
         // 2 to arm/disarm alarm
         case '2':
             arm_disarm_alarm();
+            display_menu();
             break;
 
         // 3 to check sensors
@@ -385,5 +387,39 @@ void display_trigger_log(){
  * Presence         DETECTED
  */
 void check_sensors(){
+    ST7735_FillScreen(0);    // set screen to black
+    uint16_t x=0, y=0;
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLACK;
+    char key;
 
+    do{
+        x=0, y=0;
+        ST7735_DrawString2(x, y, "Sensor", textColor, bgColor);
+        ST7735_DrawString2(x, y+=2, "Status", textColor, bgColor);
+        ST7735_DrawString(x, y+=3, "Door", textColor);
+        ST7735_DrawString(x+12, y, get_door_status() ? "OPEN  " : "CLOSED", textColor);
+
+        ST7735_DrawString(x, y+=1, "Window", textColor);
+        ST7735_DrawString(x+12, y, get_window_status() ? "OPEN  " : "CLOSED", textColor);
+
+        ST7735_DrawString(x, y+=1, "Temperature", textColor);
+        char array[10];
+        sprintf(array, "%0.2f F", RTC_read_temperature());
+        ST7735_DrawString(x+12, y, array, textColor);
+
+        ST7735_DrawString(x, y+=1, "Presence", textColor);
+        ST7735_DrawString(x+12, y, check_PIR() ? "DETECTED" : "NONE    ", textColor);
+
+        ST7735_DrawString(x, y+=2, "Press any digit to", textColor);
+        ST7735_DrawString(x, y+=1, "refresh.", textColor);
+
+        key = keypad_getkey();
+    }while(key != HOME_KEY && key != ENTER_KEY);
+
+    if(key == HOME_KEY)
+        go_home();
+
+    if(key == ENTER_KEY)
+        display_menu();
 }

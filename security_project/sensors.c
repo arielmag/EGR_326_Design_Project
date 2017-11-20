@@ -73,9 +73,10 @@ void PORT2_IRQHandler(void)
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
     if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
-        set_triggered(DOOR);
+        //set_triggered(DOOR);
 
     }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
-        set_triggered(WINDOW);
+        //set_triggered(WINDOW);
     }
 }
+

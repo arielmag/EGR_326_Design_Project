@@ -6,5 +6,6 @@ void Init_motor();
 void full_step_reverse(uint16_t speed);
 void full_step(uint16_t speed);
 void lock_unlock_door();
+void clear_motor();
 
 #endif

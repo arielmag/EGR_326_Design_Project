@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "sensors.h"
+#include "timers.h"
 
 #define LOCK_SPEED 2 // Speed that the door locks/unlocks
 
