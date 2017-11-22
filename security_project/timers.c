@@ -13,13 +13,9 @@ void SysTick_Init(){
     SysTick -> CTRL = 0x00000005; // enable SysTick, CPU clk, no interrupts
 }
 
-/*
- * Configurable Systick delay from 1 ms to 5592 ms.
- *
- * @param delay Time to delay in ms
- */
+
 void SysTick_delay(uint16_t delay){
-    SysTick -> LOAD = ((delay*48000) - 1); // every 3000 counts take 1ms, extra one cycle for keeping the counts
+    SysTick -> LOAD = ((delay*48000) - 1); // every 48000 counts take 1ms, extra one cycle for keeping the counts
     SysTick -> VAL = 0; // any write to CVR clears it
     // and COUNTFLAG in CSR
     // Wait for flag to be SET (Timeout happened)
@@ -35,7 +31,7 @@ void cas_sysDelay (uint16_t sec)
 {   volatile int i;
     for(i=0; i<sec*3; i++)
     {
-        SysTick_delay(333);
+        SysTick_delay(230); //change 230 to 333 to be exact. 250 was experimentally find optimal for 1 sec change for LCD display
     }
 }
 

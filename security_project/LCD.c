@@ -97,20 +97,19 @@ void printDateLCD(){
     printMonthLCD(RTC_registers[5]); //get month format Jan
 
     char str_date[20];
-    ST7735_FillScreen(0);
+   // ST7735_FillScreen(0);
     sprintf(str_date, "%s. %s - %x, 20%x", return_char_day, return_char_month, RTC_registers[4] , RTC_registers[6]); //format string: day-month-year
-    ST7735_DrawString(0, 0, "Date: ", ST7735_GREEN);
-    ST7735_DrawString(0, 1, str_date, ST7735_GREEN);
+    //ST7735_DrawString(0, 3, "Date: ", ST7735_GREEN);
+    ST7735_DrawString(0, 7, str_date, ST7735_GREEN);
 }
 
 void printTimeLCD(){
 
         char str_time[20];
+       sprintf(str_time,"%x : %x : %x ",RTC_registers[2],RTC_registers[1],RTC_registers[0]); //format string hour:min:sec
 
-       sprintf(str_time,"%x:%x:%x",RTC_registers[2],RTC_registers[1],RTC_registers[0]); //format string hour:min:sec
-
-       ST7735_DrawString(0, 2, "Time: ", ST7735_GREEN);
-       ST7735_DrawString(0, 3, str_time, ST7735_GREEN);
+       //ST7735_DrawString(0, 5, "Time: ", ST7735_GREEN);
+       ST7735_DrawString(0, 11, str_time, ST7735_GREEN);
 }
 
 void printDateTimeStored_LCD(){
@@ -135,8 +134,8 @@ void printDateTimeStored_LCD(){
 
 void display_home_screen_LCD()
 {
-       clearScreen();
-
+      // clearScreen();
+       RTC_read();
        char string1[]={'T', 'E', 'M','P'}; //Eventually display temperature information
        int i;
        int x=5;
@@ -147,17 +146,22 @@ void display_home_screen_LCD()
        }
 
        y+=30;
-       char string2[]={'T', 'I', 'M','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
+       char string2[]={'D', 'A', 'T','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
        for(i=0; i<4; i++){
            ST7735_DrawChar(x+(i*20), y, string2[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
 
-       y+=30;
-       char string3[]={'D','A','T','E'};    //Eventually display date information here
+       printDateLCD();
+
+
+       y+=40;
+       char string3[]={'T','I','M','E'};    //Eventually display date information here
        for(i=0; i<4; i++)
        {
            ST7735_DrawChar(x+(i*20), y, string3[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
+       printTimeLCD();
+       cas_sysDelay(1);
 }
 
 void display_set_password()
@@ -225,7 +229,7 @@ void display_set_time_date()
 
 
 }
-//todo
+
 void set_time_date() //make sure delete the manually set date line in RTC_write
 {
 
@@ -246,8 +250,9 @@ void set_time_date() //make sure delete the manually set date line in RTC_write
      char temp [1];
 
 int cur_row=8;
-ST7735_DrawString(0,5,"Enter two digits.", ST7735_GREEN);
-ST7735_DrawString(0,6,"Example:", ST7735_GREEN);
+display_set_time_date();
+ST7735_DrawString(0,5,"Enter two digits for", ST7735_GREEN);
+ST7735_DrawString(0,6,"Month. Example:", ST7735_GREEN);
 ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
 
 //****************************************************************************************************************************************
@@ -263,7 +268,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
         ST7735_DrawString(16,cur_row++,temp,ST7735_GREEN);
         ck_valid();
         if(month_flag == 0)
-        {
+        {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
             ST7735_DrawString(0,cur_row++,"Re-enter Month",ST7735_RED);
@@ -291,8 +296,8 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     clearScreen();
     cur_row=8;
     display_set_time_date();
-    ST7735_DrawString(0,5,"Enter two digits.", ST7735_GREEN);
-    ST7735_DrawString(0,6,"EXAMPLE:", ST7735_GREEN);
+    ST7735_DrawString(0,5,"Enter two digits for", ST7735_GREEN);
+    ST7735_DrawString(0,6,"Day. EXAMPLE:", ST7735_GREEN);
     ST7735_DrawString(0,7,"01-> 1st day of month", ST7735_GREEN);
 
     while(day_flag ==0){
@@ -305,7 +310,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
         ST7735_DrawString(16,cur_row++,temp,ST7735_GREEN);
         ck_valid();
         if(day_flag == 0)
-        {
+        {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
             ST7735_DrawString(0,cur_row++,"Re-enter Day",ST7735_RED);
@@ -332,8 +337,8 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     clearScreen();
     display_set_time_date();
     cur_row=8;
-    ST7735_DrawString(0,5,"Enter two digits.Example:", ST7735_GREEN);
-    ST7735_DrawString(0,6,"Example:", ST7735_GREEN);
+    ST7735_DrawString(0,5,"Enter two digits for :", ST7735_GREEN);
+    ST7735_DrawString(0,6,"Year. Example:", ST7735_GREEN);
     ST7735_DrawString(0,7,"17-> year:2017", ST7735_GREEN);
     while(year_flag==0)
     {
@@ -347,7 +352,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
         ck_valid();
 
     if(year_flag == 0)
-    {
+    {   display_set_time_date();
         ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
         cas_sysDelay(1);
         ST7735_DrawString(0,cur_row++,"Re-enter year",ST7735_RED);
@@ -372,8 +377,8 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     reset_flag();
     clearScreen();
     display_set_time_date();
-    ST7735_DrawString(0,5,"Enter one digits.Example:", ST7735_GREEN);
-    ST7735_DrawString(0,6,"Example:", ST7735_GREEN);
+    ST7735_DrawString(0,5,"Enter one digits for:", ST7735_GREEN);
+    ST7735_DrawString(0,6,"day of week. Example:", ST7735_GREEN);
     ST7735_DrawString(0,7,"1-> Sun./ 7->Sat.", ST7735_GREEN);
 
     cur_row=8;
@@ -386,7 +391,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     //draw character that was just entered at calendar[6] same row
     ck_valid();
     if(DOW_flag == 0)
-    {
+    {      display_set_time_date();
            ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
            cas_sysDelay(1);
            ST7735_DrawString(0,cur_row++,"Re-enter the day",ST7735_RED);
@@ -414,7 +419,8 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
      reset_flag();
      clearScreen();
      display_set_time_date();
-     ST7735_DrawString(0,5,"Enter two digits.:", ST7735_GREEN);
+     ST7735_DrawString(0,5,"Enter two digits for", ST7735_GREEN);
+     ST7735_DrawString(0,6,"Hour. ", ST7735_GREEN);
      cur_row=7;
     while(hour_flag == 0)
     {
@@ -427,7 +433,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
         ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
         if(hour_flag == 0)
-        {
+        {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
             ST7735_DrawString(0,cur_row++,"Re-enter hour",ST7735_RED);
@@ -450,7 +456,8 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
        reset_flag();
        clearScreen();
        display_set_time_date();
-       ST7735_DrawString(0,5,"Enter two digits.", ST7735_GREEN);
+       ST7735_DrawString(0,5,"Enter two digits for", ST7735_GREEN);
+       ST7735_DrawString(0,6,"Minute. ", ST7735_GREEN);
 
        cur_row=7;
     while(min_flag ==0)
@@ -465,7 +472,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
             ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
         if(min_flag == 0)
-        {
+        {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
             ST7735_DrawString(0,cur_row++,"Re-enter min",ST7735_RED);
@@ -490,6 +497,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
           clearScreen();
           display_set_time_date();
           ST7735_DrawString(0,5,"Enter two digits.", ST7735_GREEN);
+          ST7735_DrawString(0,6,"Second. ", ST7735_GREEN);
           cur_row=7;
     while(sec_flag==0)
     {
@@ -502,7 +510,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
             ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
         if(sec_flag == 0)
-        {
+        {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
             ST7735_DrawString(0,cur_row++,"Re-enter min",ST7735_RED);
@@ -538,7 +546,7 @@ void display_menu_LCD()
           }
 
           y+=20;
-          ST7735_DrawString(1,2, get_armed() ? "2. DISARM ALARM" : "2. ARM ALARM",ST7735_Color565(180, 240, 250));
+          ST7735_DrawString(2, 2, get_armed()? "2. DISARM ALARM" : "2. ARM ALARM",ST7735_Color565(180, 240, 250));
           /*
           char string2[]={'2','.','A','R','M','/','D','I','S','A','R','M'};    //Eventually display date information here
           for(i=0; i<12; i++)
@@ -594,21 +602,21 @@ void ck_valid()
     {
         year_flag = 1;
     }
-    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[4]!='*' &&calendar[5]!='*')
+    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[6]!='*')
     {
         DOW_flag = 1;
     }
 
-    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[4]!='*' &&calendar[5]!='*')
+    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[7]!='*' &&calendar[8]!='*')
     {
         hour_flag = 1;
     }
-    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60&& calendar[4]!='*' &&calendar[5]!='*')
+    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60 && calendar[9]!='*' &&calendar[10]!='*')
     {
         min_flag = 1;
     }
 
-    if (((calendar[11] - 48) * 10 + (calendar[12] - 48)) < 60)
+    if (((calendar[11] - 48) * 10 + (calendar[12] - 48)) < 60 && calendar[11]!='*' &&calendar[12]!='*')
     {
         sec_flag = 1;
     }

@@ -34,12 +34,13 @@ void display_trigger_log();
 void go_home();
 void check_sensors();
 char default_password[] = {'a', 'a', 'a', 'a'}; // Default password for the system
-char saved_password[4]; // 4-digit password for system
-
+char saved_password[4]= {'1', '2', '3', '1'}; // 4-digit password for system
+char typed_password[4];
 int main(void)
 {
     MAP_WDT_A_holdTimer();      // Stop the Watchdog timer
     Init48MHz();                // Set MCLK to 48MHz
+    I2C_init();                 // Initialize I2C protocal for RTC Communication
     Init_PIR();                 // Initialize ports for PIR sensor
     Init_RTC();                 // Initialize ports for RTC module
     Init_keypad();              // Initialize ports for keypad
@@ -49,6 +50,7 @@ int main(void)
     Init_alarm();               // Initialize alarm
     SysTick_Init();
 
+/*Commented out by Don Nov. 22 for saving time to debug particular functions.
     reset_system(); // This function causes the system to be reset.
                     // It should be run the first time this program is being set up
                     // to trigger events for user to set up time and password.
@@ -60,15 +62,25 @@ int main(void)
 
     // If system already setup
     go_home();
+*/
 
+    while(1)
+        {go_home();}
 }
 
 /*
  * Display home screen and start system logic
  */
 void go_home(){
+/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
     display_home_screen();      // Display screen for home
-    while(keypad_getkey() != ENTER_KEY);    // Wait for user to press enter to switch screens
+    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
+ */
+   while(check_pressed()==0)
+   {
+       display_home_screen();
+   }
+
     enter_password();       // Prompt user to enter password
 
     while(1){
@@ -118,7 +130,7 @@ void display_home_screen(){
     y += 3;
     char statusString[] = "Alarm Status: Disarmed";
     ST7735_DrawString(x, y, statusString, textColor);
-    // TODO
+
 
      */
 }
@@ -146,6 +158,8 @@ int check_reset(){
  */
 void setup_system(){
     setup_time();   // Set up the time
+    RTC_write();    // Set up the input in RTC
+    RTC_read();     // Clear out junk values for first read
     setup_password();   // Set up the password
 }
 
@@ -156,7 +170,7 @@ void setup_system(){
  * written to the RTC device.
  */
 void setup_time(){
-    set_time_date();
+    set_time_date(); //the function allows user to enter info for the array date[sec, min, hour, day, date, month, year]
 }
 
 /*
@@ -244,7 +258,7 @@ void enter_password(){
  * @return 1 if the saved password was entered, 0 if incorrect
  */
 int verify_entry(int isFirstSetup){
-    char typed_password[4];
+
     int i, is_verified = 1;
     int16_t x=20,y=80;
     int16_t textColor = ST7735_WHITE;
@@ -267,7 +281,7 @@ int verify_entry(int isFirstSetup){
         x+=25;
 
         // Check if character matches saved password
-        if(typed_password[i] != saved_password[i])
+        if(typed_password[i] != saved_password[i]) //Nov 22 Saved password is default to 1231 for debug by Don
             is_verified = 0;
 
     }

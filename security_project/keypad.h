@@ -7,5 +7,5 @@
 char keypad_getkey();
 int debounce();
 void Init_keypad();
-
+int check_pressed(void);
 #endif
