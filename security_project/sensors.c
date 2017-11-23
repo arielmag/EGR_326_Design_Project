@@ -51,7 +51,15 @@ void Init_hall(){
  * @return 1 open, 0 closed
  */
 int get_door_status(){
-    return P2->IN&BIT5;
+
+    if (!(P2->IN&BIT5))
+    {
+        return CLOSED;
+    }
+    else
+    {
+    return OPEN; }
+
 }
 
 /*
@@ -74,9 +82,23 @@ void PORT2_IRQHandler(void)
 
     if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
         //set_triggered(DOOR);
+        //TODO Don: How can we use interrupt to change LED status? on/off
 
     }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
         //set_triggered(WINDOW);
     }
 }
-
+void green()
+{
+P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
+P2->OUT ^= BIT1;
+}
+void red()
+{
+P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
+P2->OUT ^= BIT0;
+}
+void init_LED2()
+{
+    P2->DIR |= BIT0 | BIT1 | BIT2; //initialize on board LED2
+}

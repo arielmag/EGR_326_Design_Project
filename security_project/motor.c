@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include "sensors.h"
 #include "timers.h"
-
+#include "LCD.h"
+#include "ST7735.h"
 #define LOCK_SPEED 2 // Speed that the door locks/unlocks
 
 int lock = 0;
@@ -31,16 +32,23 @@ void set_lock(int status){
  */
 void lock_unlock_door(){
     if(get_lock()){ // If door is locked, unlock
+        clearScreen();
+        ST7735_DrawString(8, 8, "Unlocking",ST7735_Color565(180, 240, 250));
         full_step_reverse(LOCK_SPEED);
         set_lock(!get_lock()); // Set flag to unlocked
 
     }else{ // Otherwise, turn the other way to lock
         if(get_door_status() == CLOSED){ // Only lock if the door is closed
+            clearScreen();
+            ST7735_DrawString(8, 8, "Locking",ST7735_Color565(180, 240, 250));
             full_step(LOCK_SPEED);
             set_lock(!get_lock()); // Set flag to locked
         }else{
-            // TODO print "Door is open. Close door and try again."
-            // delay, and then go back to menu
+            clearScreen();
+            ST7735_DrawString(0, 7, "Door is open. ",ST7735_Color565(180, 240, 250));
+            ST7735_DrawString(0, 8, "Close door and try.",ST7735_Color565(180, 240, 250));
+            cas_sysDelay(2);
+                       // delay, and then go back to menu
         }
     }
 }

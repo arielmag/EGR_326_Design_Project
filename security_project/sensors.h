@@ -11,5 +11,7 @@ int check_PIR();
 void Init_hall();
 int get_window_status();
 int get_door_status();
-
+void init_LED2();
+void green();
+void red();
 #endif

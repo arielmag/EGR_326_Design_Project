@@ -65,7 +65,10 @@ int main(void)
 */
 
     while(1)
-        {go_home();}
+        {
+            go_home();
+
+        }
 }
 
 /*
@@ -76,6 +79,7 @@ void go_home(){
     display_home_screen();      // Display screen for home
     while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
  */
+    clearScreen();
    while(check_pressed()==0)
    {
        display_home_screen();
@@ -305,6 +309,7 @@ int verify_entry(int isFirstSetup){
  */
 void display_menu(){
     display_menu_LCD();
+    init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
 
     switch(keypad_getkey()){
         // 1 to lock/unlock door
