@@ -16,6 +16,7 @@
 #include "sensors.h"
 #include "ST7735.h"
 #include "timers.h"
+#include "buzzer.h"
 
 void reset_system();
 void display_home_screen();
@@ -336,8 +337,19 @@ void display_menu(){
         // 5 to change time
         case '5':
             setup_time();
+            RTC_write();    // Set up the input in RTC
+            RTC_read();     // Clear out junk values for first read
             break;
 
+        // 6 to view log
+        case '6':
+            enter_password(); //verify the password first before reset
+            setup_password();
+            break;
+        //7  to play alarm for debug
+        case '7':
+            tone1();
+            break;
         // '*' to go back to home
         case '*':
             go_home();
