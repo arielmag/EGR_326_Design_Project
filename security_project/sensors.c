@@ -101,4 +101,5 @@ P2->OUT ^= BIT0;
 void init_LED2()
 {
     P2->DIR |= BIT0 | BIT1 | BIT2; //initialize on board LED2
+    P2 ->OUT = 0;
 }

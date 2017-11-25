@@ -64,10 +64,10 @@ int main(void)
     // If system already setup
     go_home();
 */
-
+    Init_wdt();
     while(1)
         {
-            go_home();
+            //go_home();
 
         }
 }

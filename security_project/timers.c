@@ -2,7 +2,10 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdint.h>
-
+#define WDT_A_TIMEOUT RESET_SRC_1
+#define SYSTICK_INTERRUPT_PERIOD_MS 250
+volatile int flag_wdt=0;
+volatile int pre_flag=0;
 /*
  * Initialize the SysTick timer.
  */
@@ -51,4 +54,63 @@ void Init48MHz(){
     CS_startHFXT(false); // false means that there are no timeouts set,will return when stable
     /* Initializing MCLK to HFXT (effectively 48MHz) */
     MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
+}
+
+void Init_wdt()
+{
+    if(MAP_ResetCtl_getSoftResetSource() & WDT_A_TIMEOUT)
+    {
+
+
+        while(1)
+        {
+            go_home();
+        }
+    }
+        /* Setting MCLK to REFO at 128Khz for LF mode and SMCLK to REFO */
+        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
+        MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
+
+        /* Configuring WDT to timeout after 8192K iterations of SMCLK, at 128k,
+         * this will roughly equal 64 seconds*/
+        MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+        MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_ACLK,
+                                    WDT_A_CLOCKITERATIONS_512K); //8192K
+
+        MAP_SysTick_enableModule();
+
+
+        MAP_SysTick_setPeriod((uint32_t)((float)MAP_CS_getMCLK()*(float)SYSTICK_INTERRUPT_PERIOD_MS*0.001));
+        MAP_SysTick_enableInterrupt();
+
+       /* Enabling interrupts and starting the watchdog timer*/
+
+       MAP_Interrupt_enableMaster();
+
+       MAP_WDT_A_startTimer();
+       while (1)
+           {
+       //        MAP_PCM_gotoLPM0();
+       //        //print flag on LCD
+       //        MAP_WDT_A_clearTimer(); // Call when a key is pressed
+               keypad_getkey();
+               flag_wdt=0;
+               MAP_WDT_A_clearTimer(); // Call when a key is pressed
+           }
+       }
+
+
+
+/* SysTick ISR - This ISR will fire every 60s. Having this ISR fire will wake
+    up the device from LPM0 and the WDT_A will be serviced in the main loop */
+void SysTick_Handler(void)
+{
+    static int count;
+    count++;
+    if(count ==4 ){
+        flag_wdt++;
+        count=0;
+    }
+    return;
 }

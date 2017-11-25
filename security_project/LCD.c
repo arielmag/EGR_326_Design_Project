@@ -100,7 +100,7 @@ void printDateLCD(){
    // ST7735_FillScreen(0);
     sprintf(str_date, "%s. %s - %x, 20%x", return_char_day, return_char_month, RTC_registers[4] , RTC_registers[6]); //format string: day-month-year
     //ST7735_DrawString(0, 3, "Date: ", ST7735_GREEN);
-    ST7735_DrawString(0, 7, str_date, ST7735_GREEN);
+    ST7735_DrawString(0, 8, str_date, ST7735_GREEN);
 }
 
 void printTimeLCD(){
@@ -109,7 +109,7 @@ void printTimeLCD(){
        sprintf(str_time,"%x : %x : %x ",RTC_registers[2],RTC_registers[1],RTC_registers[0]); //format string hour:min:sec
 
        //ST7735_DrawString(0, 5, "Time: ", ST7735_GREEN);
-       ST7735_DrawString(0, 11, str_time, ST7735_GREEN);
+       ST7735_DrawString(0, 12, str_time, ST7735_GREEN);
 }
 
 void printDateTimeStored_LCD(){
@@ -144,8 +144,9 @@ void display_home_screen_LCD()
        {
            ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
+       print_temperature();
 
-       y+=30;
+       y+=40;
        char string2[]={'D', 'A', 'T','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
        for(i=0; i<4; i++){
            ST7735_DrawChar(x+(i*20), y, string2[i], ST7735_Color565(180, 240, 250), 0, 2);
@@ -660,4 +661,12 @@ void disarm_success_LCD(){
     int y=5;
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
     ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
+}
+
+void print_temperature()
+{
+    char str_temperature[40];
+   // ST7735_FillScreen(0);
+    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
+    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
 }

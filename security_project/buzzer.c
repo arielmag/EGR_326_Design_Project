@@ -114,8 +114,8 @@ void tone1()
         SysTick_delay(333);
         SysTick_delay(333);
         pwm(tone[3]);
-        SysTick_delay(333);
-        SysTick_delay(333);
+        SysTick_delay(250);
+        SysTick_delay(250);
         pwm(tone[0]);
         SysTick_delay(250);
         SysTick_delay(250);
@@ -123,16 +123,14 @@ void tone1()
         SysTick_delay(250);
         SysTick_delay(250);
         pwm(tone[3]);
-        SysTick_delay(300);
-        SysTick_delay(300);
+        SysTick_delay(250);
+        SysTick_delay(250);
         pwm(tone[0]);
-        SysTick_delay(300);
-        SysTick_delay(300);
+        SysTick_delay(250);
+        SysTick_delay(250);
         pwm(tone[5]);
-        SysTick_delay(300);
-        SysTick_delay(300);
-        SysTick_delay(200);
-
+        SysTick_delay(250);
+        SysTick_delay(250);
 
         sounder_off();
         cas_sysDelay(1);

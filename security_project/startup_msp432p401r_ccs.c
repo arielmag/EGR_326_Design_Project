@@ -50,7 +50,8 @@ extern void _c_int00(void);
 
 /* External declaration for system initialization function                  */
 extern void SystemInit(void);
-
+extern void SysTick_Handler (void);
+extern void PORT2_IRQHandler (void);
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;
 
@@ -83,7 +84,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* Debug monitor handler     */
     0,                                      /* Reserved                  */
     defaultISR,                             /* The PendSV handler        */
-    defaultISR,                             /* The SysTick handler       */
+    SysTick_Handler,                             /* The SysTick handler       */
     defaultISR,                             /* PSS ISR                   */
     defaultISR,                             /* CS ISR                    */
     defaultISR,                             /* PCM ISR                   */

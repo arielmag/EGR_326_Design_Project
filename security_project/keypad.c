@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "keypad.h"
-
+#include "timers.h"
+extern volatile int flag_wdt;
+extern volatile int pre_flag;
 /*
  * This function sets up ports for use of the keypad.
  * P4.0, 4.1, 4.2, 4.3 Inputs
@@ -57,6 +59,16 @@ char keypad_getkey()
 
                if(col==2)                return '#';
            }
+
+           if(flag_wdt!=pre_flag)
+           {
+
+               //update LCD
+               pre_flag=(flag_wdt);
+
+           }
+
+
        }while(1);
 }
 
