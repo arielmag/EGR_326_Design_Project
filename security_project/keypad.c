@@ -3,8 +3,9 @@
 #include <stdint.h>
 #include "keypad.h"
 #include "timers.h"
-extern volatile int flag_wdt;
-extern volatile int pre_flag;
+extern void go_home();
+extern volatile int user_timeout;
+
 /*
  * This function sets up ports for use of the keypad.
  * P4.0, 4.1, 4.2, 4.3 Inputs
@@ -60,16 +61,14 @@ char keypad_getkey()
                if(col==2)                return '#';
            }
 
-           if(flag_wdt!=pre_flag)
-           {
-
-               //update LCD
-               pre_flag=(flag_wdt);
-
+           if(user_timeout ==1) //for idle state detection
+           {   //idle state, go back to home screen
+              // printf("\n timeout \n");
+               go_home();
            }
 
-
        }while(1);
+
 }
 
 int debounce(int row)

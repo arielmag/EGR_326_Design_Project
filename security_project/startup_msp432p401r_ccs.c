@@ -50,8 +50,9 @@ extern void _c_int00(void);
 
 /* External declaration for system initialization function                  */
 extern void SystemInit(void);
-extern void SysTick_Handler (void);
+//extern void SysTick_Handler (void);
 extern void PORT2_IRQHandler (void);
+extern void WDT_A_IRQHandler (void); //for detecting user input timeout of 60s
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;
 
@@ -84,11 +85,11 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* Debug monitor handler     */
     0,                                      /* Reserved                  */
     defaultISR,                             /* The PendSV handler        */
-    SysTick_Handler,                             /* The SysTick handler       */
+    defaultISR,                             /* The SysTick handler       */
     defaultISR,                             /* PSS ISR                   */
     defaultISR,                             /* CS ISR                    */
     defaultISR,                             /* PCM ISR                   */
-    defaultISR,                             /* WDT ISR                   */
+    WDT_A_IRQHandler,                             /* WDT ISR                   */
     defaultISR,                             /* FPU ISR                   */
     defaultISR,                             /* FLCTL ISR                 */
     defaultISR,                             /* COMP0 ISR                 */

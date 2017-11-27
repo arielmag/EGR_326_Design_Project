@@ -37,6 +37,8 @@ void check_sensors();
 char default_password[] = {'a', 'a', 'a', 'a'}; // Default password for the system
 char saved_password[4]= {'1', '2', '3', '1'}; // 4-digit password for system
 char typed_password[4];
+extern volatile int user_timeout;
+extern int count;
 int main(void)
 {
     MAP_WDT_A_holdTimer();      // Stop the Watchdog timer
@@ -49,7 +51,8 @@ int main(void)
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
     Init_alarm();               // Initialize alarm
-    SysTick_Init();
+    SysTick_Init();             // Initialize SysTick timer
+    init_user_input_WDT_timer();// Initialize WDT timer for idle state
 
 /*Commented out by Don Nov. 22 for saving time to debug particular functions.
     reset_system(); // This function causes the system to be reset.
@@ -64,10 +67,9 @@ int main(void)
     // If system already setup
     go_home();
 */
-    Init_wdt();
     while(1)
         {
-            //go_home();
+            go_home();
 
         }
 }
@@ -80,6 +82,7 @@ void go_home(){
     display_home_screen();      // Display screen for home
     while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
  */
+    user_timeout = 0;
     clearScreen();
    while(check_pressed()==0)
    {
@@ -88,7 +91,8 @@ void go_home(){
 
     enter_password();       // Prompt user to enter password
 
-    while(1){
+    while(1)
+    {
         display_menu();         // Display the menu screen. Different options within
                                 // this function will change the screen displayed.
     }
@@ -311,8 +315,10 @@ int verify_entry(int isFirstSetup){
 void display_menu(){
     display_menu_LCD();
     init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
-
-    switch(keypad_getkey()){
+    char menu =keypad_getkey();
+    count=0; //after every key pressed, reset the WDT idle timer and recount second
+    MAP_WDT_A_clearTimer();
+    switch(menu){
         // 1 to lock/unlock door
         case '1':
             lock_unlock_door();
