@@ -20,6 +20,10 @@ void ck_valid();
 void arm_error_LCD();
 void arm_success_LCD();
 void disarm_success_LCD();
+void go_home();
+void display_menu();
+void print_temperature();
+
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;
