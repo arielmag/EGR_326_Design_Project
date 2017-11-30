@@ -55,6 +55,7 @@ int main(void)
     Init_alarm();               // Initialize alarm
     SysTick_Init();             // Initialize SysTick timer
     init_user_input_WDT_timer();// Initialize WDT timer for idle state
+<<<<<<< HEAD
     get_clock();
 
 
@@ -69,6 +70,19 @@ int main(void)
         setup_system();         // Let the user setup time and password
     }
 
+=======
+
+/*Commented out by Don Nov. 22 for saving time to debug particular functions.
+    reset_system(); // This function causes the system to be reset.
+                    // It should be run the first time this program is being set up
+                    // to trigger events for user to set up time and password.
+                    // Otherwise, comment this out.
+
+    if(check_reset()){          // Check if system is reset
+        setup_system();         // Let the user setup time and password
+    }
+
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
     // If system already setup
     go_home();
 */
@@ -78,6 +92,7 @@ int main(void)
 
         }
 }
+<<<<<<< HEAD
 
 /*
  * Display home screen and start system logic
@@ -94,6 +109,24 @@ void go_home(){
        display_home_screen();
    }
 
+=======
+
+/*
+ * Display home screen and start system logic
+ */
+void go_home(){
+/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
+    display_home_screen();      // Display screen for home
+    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
+ */
+    user_timeout = 0;
+    clearScreen();
+   while(check_pressed()==0)
+   {
+       display_home_screen();
+   }
+
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
     enter_password();       // Prompt user to enter password
 
     while(1)
@@ -125,7 +158,32 @@ void reset_system(){
  */
 void display_home_screen(){
     display_home_screen_LCD();
+<<<<<<< HEAD
 
+=======
+    /*
+    ST7735_FillScreen(0);    // set screen to black
+    uint16_t x=0, y=0;
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLACK;
+    char titleString[] = "home";
+    ST7735_DrawString2(x, y, titleString, textColor, bgColor);
+    y += 3;
+    char timeString[] = "12:00:00";
+    ST7735_DrawString(x, y, timeString, textColor);
+    y += 1;
+    char dateString[] = "November 17, 2017";
+    ST7735_DrawString(x, y, dateString, textColor);
+    y += 1;
+    char tempString[] = "75 F";
+    ST7735_DrawString(x, y, tempString, textColor);
+    y += 3;
+    char statusString[] = "Alarm Status: Disarmed";
+    ST7735_DrawString(x, y, statusString, textColor);
+
+
+     */
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 }
 
 /*

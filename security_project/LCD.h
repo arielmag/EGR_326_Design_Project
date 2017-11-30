@@ -21,7 +21,10 @@ void arm_error_LCD();
 void arm_success_LCD();
 void disarm_success_LCD();
 void print_temperature();
+<<<<<<< HEAD
 void pwm_lcd();
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;

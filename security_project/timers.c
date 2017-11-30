@@ -4,7 +4,10 @@
 #include <stdint.h>
 volatile int user_timeout=0;
 int count=0;
+<<<<<<< HEAD
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 /*
  * Initialize the SysTick timer.
  */
@@ -63,9 +66,16 @@ void get_clock()
     bclk = CS_getBCLK();
 }
 
+<<<<<<< HEAD
 void init_user_input_WDT_timer()
 {
     /*WDT in interval mdoe is used as a timer counter for trigger idle status*/
+=======
+
+void init_user_input_WDT_timer()
+{
+    /*WDT in interval mdoe is used as a timer counter for trigger idle status
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
     /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
@@ -85,6 +95,7 @@ void init_user_input_WDT_timer()
 }
 void WDT_A_IRQHandler(void)
 {
+<<<<<<< HEAD
 
     count++;
     if(count ==15 )
@@ -96,5 +107,18 @@ void WDT_A_IRQHandler(void)
 //     sprintf(string, "IRQ %i", count);
 //     ST7735_DrawString(0,1,string,ST7735_GREEN);
 
+=======
+
+    count++;
+    if(count ==15 )
+    {
+        user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
+        count=0;
+    }
+//     char string[50]; //debug purpose
+//     sprintf(string, "IRQ %i", count);
+//     ST7735_DrawString(0,1,string,ST7735_GREEN);
+
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
     return;
 }

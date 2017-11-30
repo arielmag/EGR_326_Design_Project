@@ -14,5 +14,8 @@ int get_door_status();
 void init_LED2();
 void green();
 void red();
+<<<<<<< HEAD
 void ADC_Init();
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 #endif

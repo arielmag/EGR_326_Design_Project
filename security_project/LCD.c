@@ -8,7 +8,10 @@
 #include <string.h>
 #include "keypad.h"
 #include "alarm.h"
+<<<<<<< HEAD
 #include "sensors.h"
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -165,11 +168,14 @@ void display_home_screen_LCD()
        }
        printTimeLCD();
 
+<<<<<<< HEAD
        //TODO: Add the following lines into menu display loop
        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
        pwm_lcd(); //after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
 }
 
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 void display_set_password()
 {
     clearScreen();
