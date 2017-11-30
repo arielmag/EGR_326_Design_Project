@@ -42,6 +42,8 @@ extern int count;
 int main(void)
 {
     MAP_WDT_A_holdTimer();      // Stop the Watchdog timer
+    ADC_Init();
+
     Init48MHz();                // Set MCLK to 48MHz
     I2C_init();                 // Initialize I2C protocal for RTC Communication
     Init_PIR();                 // Initialize ports for PIR sensor
@@ -53,6 +55,9 @@ int main(void)
     Init_alarm();               // Initialize alarm
     SysTick_Init();             // Initialize SysTick timer
     init_user_input_WDT_timer();// Initialize WDT timer for idle state
+    get_clock();
+
+
 
 /*Commented out by Don Nov. 22 for saving time to debug particular functions.
     reset_system(); // This function causes the system to be reset.
@@ -120,28 +125,7 @@ void reset_system(){
  */
 void display_home_screen(){
     display_home_screen_LCD();
-    /*
-    ST7735_FillScreen(0);    // set screen to black
-    uint16_t x=0, y=0;
-    int16_t textColor = ST7735_WHITE;
-    int16_t bgColor = ST7735_BLACK;
-    char titleString[] = "home";
-    ST7735_DrawString2(x, y, titleString, textColor, bgColor);
-    y += 3;
-    char timeString[] = "12:00:00";
-    ST7735_DrawString(x, y, timeString, textColor);
-    y += 1;
-    char dateString[] = "November 17, 2017";
-    ST7735_DrawString(x, y, dateString, textColor);
-    y += 1;
-    char tempString[] = "75 F";
-    ST7735_DrawString(x, y, tempString, textColor);
-    y += 3;
-    char statusString[] = "Alarm Status: Disarmed";
-    ST7735_DrawString(x, y, statusString, textColor);
 
-
-     */
 }
 
 /*

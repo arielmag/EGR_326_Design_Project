@@ -21,6 +21,7 @@ void arm_error_LCD();
 void arm_success_LCD();
 void disarm_success_LCD();
 void print_temperature();
+void pwm_lcd();
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;

@@ -23,8 +23,9 @@
 #include <string.h>
 #include "keypad.h"
 #include "alarm.h"
+#include "buzzer.h"
 
-void pwm(int period);
+
 void sounder_off();
 /*
 *       timeHigh = 1/(2 * toneFrequency) = period / 2
@@ -84,10 +85,10 @@ int main(void)
 */
 void sounder_off()
 {
-    pwm(0);
+    pwm_buzzer(0);
 }
 
-void pwm(int period)
+void pwm_buzzer(int period)
 {
     P2->DIR |=BIT6;
     P2->SEL0 |= BIT6;
@@ -104,31 +105,31 @@ void pwm(int period)
 
 void tone1()
 {
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[3]);
+        pwm_buzzer(tone[3]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[0]);
+        pwm_buzzer(tone[0]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[3]);
+        pwm_buzzer(tone[3]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[0]);
+        pwm_buzzer(tone[0]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(250);
         SysTick_delay(250);
 

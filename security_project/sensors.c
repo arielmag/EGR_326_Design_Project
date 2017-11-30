@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "alarm.h"
+volatile uint16_t curADCResult;
+volatile float normalizedADCRes;
 
 /*
  * Initialize pins for the the PIR sensor.
@@ -102,4 +104,45 @@ void init_LED2()
 {
     P2->DIR |= BIT0 | BIT1 | BIT2; //initialize on board LED2
     P2 ->OUT = 0;
+}
+
+void ADC_Init() //credit: ADC14 MSP432ware
+{
+    //Initializing ADC (MCLK/1/4)
+MAP_ADC14_enableModule();
+MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
+
+    //Configuring GPIOs (5.5,A0) Analog input A0 (one of 32) is on P5.5
+MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN5, GPIO_TERTIARY_MODULE_FUNCTION);
+
+    //Configure ADC memory
+MAP_ADC14_configureSingleSampleMode(ADC_MEM0,true); //repeat mode continuous sampling
+MAP_ADC14_configureConversionMemory(ADC_MEM0,ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A0, false);
+    //false indicates differential mode, if true, uses 2 consecutive channels
+
+    //Configure sample timer
+MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION); //requires a trigger for each sample * changed to automatic
+
+    //Enabling/Toggling conversion
+MAP_ADC14_enableConversion();
+MAP_ADC14_toggleConversionTrigger();
+
+    //Enabling Interrupts
+MAP_ADC14_enableInterrupt(ADC_INT0); //interrupt when conversion is complete
+MAP_Interrupt_enableInterrupt(INT_ADC14);
+MAP_Interrupt_enableMaster();
+}
+void ADC14_IRQHandler(void)
+{
+    uint64_t status = MAP_ADC14_getEnabledInterruptStatus();
+    //load the bits indicating which ADC channel requested interrupt
+    MAP_ADC14_clearInterruptFlag(status);//clear interrupt flag
+
+    if(ADC_INT0 & status)
+    {
+        curADCResult = MAP_ADC14_getResult(ADC_MEM0);
+        normalizedADCRes = (curADCResult * 3.3 ) / 16384; //assume 3.3 V ref. 14 bits
+//        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
+
+    }
 }
