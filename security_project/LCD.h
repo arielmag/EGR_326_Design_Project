@@ -20,14 +20,8 @@ void ck_valid();
 void arm_error_LCD();
 void arm_success_LCD();
 void disarm_success_LCD();
-void go_home();
-void display_menu();
 void print_temperature();
-<<<<<<< HEAD
 void pwm_lcd();
-=======
-
->>>>>>> ce347f13da3620c5d2c256b622f934adb58fa88d
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;

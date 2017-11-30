@@ -59,9 +59,8 @@ extern unsigned long __STACK_END;
 
 
 /* External declarations for the interrupt handlers used by the application. */
-//extern void SysTick_Handler(void);
-extern void WDT_A_IRQHandler(void); // for detecting user input timeout of 60s
-//extern void PORT2_IRQHandler(void);
+
+/* To be added by user */
 
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to  */
@@ -87,7 +86,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* Debug monitor handler     */
     0,                                      /* Reserved                  */
     defaultISR,                             /* The PendSV handler        */
-    defaultISR,                        /* The SysTick handler       */
+    defaultISR,                             /* The SysTick handler       */
     defaultISR,                             /* PSS ISR                   */
     defaultISR,                             /* CS ISR                    */
     defaultISR,                             /* PCM ISR                   */

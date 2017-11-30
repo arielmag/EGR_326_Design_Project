@@ -14,11 +14,5 @@ int get_door_status();
 void init_LED2();
 void green();
 void red();
-<<<<<<< HEAD
 void ADC_Init();
-=======
-void check_sensors();
-void flashing_red();
-
->>>>>>> ce347f13da3620c5d2c256b622f934adb58fa88d
 #endif
