@@ -681,6 +681,7 @@ void print_temperature()
     sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
     ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
 }
+<<<<<<< HEAD
 
 void pwm_lcd()
 {
@@ -698,3 +699,5 @@ TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP
         |TIMER_A_CTL_CLR;
 
 }
+=======
+>>>>>>> parent of ce347f1... Fixed duplicate function
