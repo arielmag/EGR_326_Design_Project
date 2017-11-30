@@ -58,14 +58,9 @@ extern unsigned long __STACK_END;
 
 
 /* External declarations for the interrupt handlers used by the application. */
-<<<<<<< HEAD
-
-/* To be added by user */
-=======
 //extern void SysTick_Handler(void);
-//extern void WDT_A_IRQHandler(void); // for detecting user input timeout of 60s
+extern void WDT_A_IRQHandler(void); // for detecting user input timeout of 60s
 //extern void PORT2_IRQHandler(void);
->>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to  */
@@ -91,11 +86,11 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* Debug monitor handler     */
     0,                                      /* Reserved                  */
     defaultISR,                             /* The PendSV handler        */
-    defaultISR,                             /* The SysTick handler       */
+    defaultISR,                        /* The SysTick handler       */
     defaultISR,                             /* PSS ISR                   */
     defaultISR,                             /* CS ISR                    */
     defaultISR,                             /* PCM ISR                   */
-    defaultISR,                             /* WDT ISR                   */
+    WDT_A_IRQHandler,                             /* WDT ISR                   */
     defaultISR,                             /* FPU ISR                   */
     defaultISR,                             /* FLCTL ISR                 */
     defaultISR,                             /* COMP0 ISR                 */

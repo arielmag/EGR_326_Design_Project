@@ -8,22 +8,11 @@
 #include <string.h>
 #include "keypad.h"
 #include "alarm.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include "sensors.h"
-<<<<<<< HEAD
-=======
->>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
-=======
->>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
-=======
->>>>>>> parent of 7e165f4... LCD backlight activated
-=======
 #include "motor.h"
 #include "buzzer.h"
+#include "keypad.h"
 
->>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -36,8 +25,6 @@ void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
 }
 
-<<<<<<< HEAD
-=======
 /*
  * Display home screen and start system logic
  */
@@ -47,6 +34,7 @@ void go_home(){
     while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
  */
     //user_timeout = 0;
+    set_timeout(0);
     clearScreen();
    while(check_pressed()==0)
    {
@@ -79,11 +67,12 @@ void display_menu(){
     display_menu_LCD();
     init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
 
-//    char menu = keypad_getkey();
-//    count = 0; // after every key pressed, reset the WDT idle timer and recount second
-//    MAP_WDT_A_clearTimer();
+    char menu = keypad_getkey();
+    set_count(0);
+    //count = 0; // after every key pressed, reset the WDT idle timer and recount second
+    MAP_WDT_A_clearTimer();
 
-    switch(keypad_getkey()){
+    switch(menu){
         // 1 to lock/unlock door
         case '1':
             lock_unlock_door();
@@ -133,7 +122,6 @@ void display_menu(){
     }
 }
 
->>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 void printDayLCD(char day) //read from RTC[3]
 {
     switch(day){
@@ -246,6 +234,10 @@ void printDateTimeStored_LCD(){
 
 }
 
+/*
+ * This function displays the home screen with the time, date,
+ * alarm status, and temperature
+ */
 void display_home_screen_LCD()
 {
       // clearScreen();
@@ -259,7 +251,7 @@ void display_home_screen_LCD()
            ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
        print_temperature();
-
+  
        y+=40;
        char string2[]={'D', 'A', 'T','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
        for(i=0; i<4; i++){
@@ -276,22 +268,17 @@ void display_home_screen_LCD()
            ST7735_DrawChar(x+(i*20), y, string3[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
        printTimeLCD();
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-       //TODO: Add the following lines into menu display loop
-       MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
-       pwm_lcd(); //after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
-=======
        cas_sysDelay(1);
->>>>>>> parent of 7e165f4... LCD backlight activated
 }
 
-=======
->>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
-=======
->>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+void print_temperature()
+{
+    char str_temperature[40];
+   // ST7735_FillScreen(0);
+    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
+    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
+}
+
 void display_set_password()
 {
     clearScreen();
@@ -358,6 +345,12 @@ void display_set_time_date()
 
 }
 
+/*
+ * This function displays a screen to prompt the user to setup the time,
+ * gets keypad input from user to set the time and displays
+ * the keypad input as the user enters a valid number. The time is then
+ * written to the RTC device.
+ */
 void set_time_date() //make sure delete the manually set date line in RTC_write
 {
 
@@ -789,34 +782,3 @@ void disarm_success_LCD(){
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
     ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
 }
-
-void print_temperature()
-{
-    char str_temperature[40];
-   // ST7735_FillScreen(0);
-    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
-    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
-}
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-void pwm_lcd()
-{
-    DC_LCD = curADCResult / 10; // /85 originally
-P5->DIR |=BIT6;
-P5->SEL0 |= BIT6;
-P5 -> SEL1 &= ~(BIT6);
-
-TIMER_A2 ->CCR[0] = 1000 - 1; //PWM Period
-TIMER_A2 ->CCTL[1] = TIMER_A_CCTLN_OUTMOD_7; //CCR1 Reset\set
-TIMER_A2 ->CCR[1] = DC_LCD; //duty cycle
-//TIMER_A1 ->CCTL[2] =TIMER_A_CCTLN_OUTMOD_7; //CCR2 reset/set
-//TIMER_A1 ->CCR[2] = 250;// CCR2 duty cycle
-TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP
-        |TIMER_A_CTL_CLR;
-
-}
-=======
->>>>>>> parent of ce347f1... Fixed duplicate function
-=======
->>>>>>> parent of 7e165f4... LCD backlight activated
