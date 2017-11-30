@@ -12,12 +12,18 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 #include "sensors.h"
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 7e165f4... LCD backlight activated
+=======
+#include "motor.h"
+#include "buzzer.h"
+
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -30,6 +36,104 @@ void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Display home screen and start system logic
+ */
+void go_home(){
+/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
+    display_home_screen();      // Display screen for home
+    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
+ */
+    //user_timeout = 0;
+    clearScreen();
+   while(check_pressed()==0)
+   {
+       display_home_screen_LCD();
+   }
+
+    enter_password();       // Prompt user to enter password
+
+    while(1){
+        display_menu();         // Display the menu screen. Different options within
+                                // this function will change the screen displayed.
+    }
+}
+
+/*
+ * This function displays a menu with options:
+ *
+ * Main Menu
+ * 1. Lock/Unlock Door
+ * 2. Arm/Disarm Alarm
+ * 3. Check Sensors (Door/Window/Temperature/Presence)
+ * 4. View Log
+ * 5. Change Time
+ * 6. Change Password
+ * It returns to the home screen if idle for more than 1 minute. The user can scroll
+ * through the menu items using the up and down buttons and press an option by pressing
+ * the enter button. Pressing the back button returns to the home screen.
+ */
+void display_menu(){
+    display_menu_LCD();
+    init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
+
+//    char menu = keypad_getkey();
+//    count = 0; // after every key pressed, reset the WDT idle timer and recount second
+//    MAP_WDT_A_clearTimer();
+
+    switch(keypad_getkey()){
+        // 1 to lock/unlock door
+        case '1':
+            lock_unlock_door();
+            break;
+
+        // 2 to arm/disarm alarm
+        case '2':
+            arm_disarm_alarm();
+            display_menu();
+            break;
+
+        // 3 to check sensors
+        case '3':
+            check_sensors();
+            break;
+
+        // 4 to view log
+        case '4':
+            display_log();
+            break;
+
+        // 5 to change time
+        case '5':
+            set_time_date();
+            RTC_write();    // Set up the input in RTC
+            RTC_read();     // Clear out junk values for first read
+            break;
+
+        // 6 to change password
+        case '6':
+            enter_password(); //verify the password first before reset
+            setup_password();
+            break;
+
+        //7  to play alarm for debug
+        case '7':
+            tone1();
+            break;
+        // '*' to go back to home
+        case HOME_KEY:
+            go_home();
+            break;
+
+        case ENTER_KEY:
+            go_home();
+            break;
+    }
+}
+
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 void printDayLCD(char day) //read from RTC[3]
 {
     switch(day){

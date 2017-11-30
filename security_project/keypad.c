@@ -3,7 +3,12 @@
 #include <stdint.h>
 #include "keypad.h"
 #include "timers.h"
+<<<<<<< HEAD
 extern void go_home();
+=======
+#include "LCD.h"
+
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 extern volatile int user_timeout;
 
 /*
@@ -61,11 +66,18 @@ char keypad_getkey()
                if(col==2)                return '#';
            }
 
+<<<<<<< HEAD
            if(user_timeout ==1) //for idle state detection
            {   //idle state, go back to home screen
               // printf("\n timeout \n");
                go_home();
            }
+=======
+//           if(user_timeout == 1){ // for idle state detection
+//               // idle state, go back to home screen
+//               go_home();
+//           }
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 
        }while(1);
 

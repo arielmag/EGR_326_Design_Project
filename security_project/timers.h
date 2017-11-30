@@ -11,6 +11,7 @@ void init_user_input_WDT_timer();
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void get_clock(void);
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
@@ -18,4 +19,7 @@ void get_clock(void);
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 7e165f4... LCD backlight activated
+=======
+
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 #endif

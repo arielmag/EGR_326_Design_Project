@@ -91,12 +91,35 @@ void PORT2_IRQHandler(void)
     status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
+<<<<<<< HEAD
     if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
         //set_triggered(DOOR);
         //TODO Don: How can we use interrupt to change LED status? on/off
 
     }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
         //set_triggered(WINDOW);
+=======
+    // If armed and not triggered, check for triggers
+    if( !get_trigger_status() && get_armed()){
+
+        if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
+                //TODO Don: How can we use interrupt to change LED status? on/off
+                flashing_red();
+                set_trigger_status(1);
+                log_trigger_time(DOOR);
+
+        }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
+                flashing_red();
+                set_trigger_status(1);
+                log_trigger_time(WINDOW);
+
+        }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
+                flashing_red();
+                set_trigger_status(1);
+                log_trigger_time(PRESENCE);
+
+        }
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
     }
 }
 void green()

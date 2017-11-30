@@ -18,9 +18,12 @@
 #include "timers.h"
 #include "buzzer.h"
 
+<<<<<<< HEAD
 void reset_system();
 void display_home_screen();
 int check_reset();
+=======
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
 void setup_system();
 void enter_password();
 void display_menu();
@@ -51,6 +54,7 @@ int main(void)
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
     Init_alarm();               // Initialize alarm
+<<<<<<< HEAD
     SysTick_Init();             // Initialize SysTick timer
     init_user_input_WDT_timer();// Initialize WDT timer for idle state
 <<<<<<< HEAD
@@ -113,6 +117,13 @@ void go_home(){
         display_menu();         // Display the menu screen. Different options within
                                 // this function will change the screen displayed.
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+    //init_user_input_WDT_timer();// Initialize WDT timer for idle state
+
+    // Hold down P1.1 on startup to reset system
+    if(!(P1IN&BIT1)){
+        reset_system();
+>>>>>>> parent of a9580e5... Merged both changes, finished arm/disarm
     }
 }
 
