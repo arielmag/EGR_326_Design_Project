@@ -782,11 +782,3 @@ void disarm_success_LCD(){
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
     ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
 }
-
-void print_temperature()
-{
-    char str_temperature[40];
-   // ST7735_FillScreen(0);
-    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
-    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
-}
