@@ -21,6 +21,9 @@ extern int hour_flag;
 extern int min_flag;
 extern int sec_flag;
 
+extern volatile uint16_t curADCResult;
+volatile int DC_LCD; // duty cyclt for lcd pwm
+
 void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
 }
@@ -268,7 +271,10 @@ void display_home_screen_LCD()
            ST7735_DrawChar(x+(i*20), y, string3[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
        printTimeLCD();
-       cas_sysDelay(1);
+
+       // TODO: Add the following lines into menu display loop
+       MAP_ADC14_toggleConversionTrigger();
+       pwm_lcd(); // after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
 }
 
 void print_temperature()
@@ -277,6 +283,21 @@ void print_temperature()
    // ST7735_FillScreen(0);
     sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
     ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
+}
+
+void pwm_lcd()
+{
+    DC_LCD = curADCResult / 10; // /85 originally
+    P5->DIR |=BIT6;
+    P5->SEL0 |= BIT6;
+    P5 -> SEL1 &= ~(BIT6);
+
+    TIMER_A2 ->CCR[0] = 1000 - 1; //PWM Period
+    TIMER_A2 ->CCTL[1] = TIMER_A_CCTLN_OUTMOD_7; //CCR1 Reset\set
+    TIMER_A2 ->CCR[1] = DC_LCD; //duty cycle
+    //TIMER_A1 ->CCTL[2] =TIMER_A_CCTLN_OUTMOD_7; //CCR2 reset/set
+    //TIMER_A1 ->CCR[2] = 250;// CCR2 duty cycle
+    TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP |TIMER_A_CTL_CLR;
 }
 
 void display_set_password()

@@ -16,5 +16,6 @@ void green();
 void red();
 void check_sensors();
 void flashing_red();
+void ADC_Init();
 
 #endif

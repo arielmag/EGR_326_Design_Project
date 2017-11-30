@@ -9,7 +9,7 @@
 #define BUZZER_H_
 
 void tone1();
-void pwm(int period);
+void pwm_buzzer(int period);
 void sounder_off();
-void tone1();
+
 #endif /* BUZZER_H_ */

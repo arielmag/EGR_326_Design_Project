@@ -6,6 +6,7 @@
 
 //volatile int user_timeout = 0;
 extern volatile int count = 0;
+static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
 
 void set_count(int value){
     count = value;
@@ -43,7 +44,7 @@ void cas_sysDelay (uint16_t sec)
 {   volatile int i;
     for(i=0; i<sec*3; i++)
     {
-        SysTick_delay(230); //change 230 to 333 to be exact. 250 was experimentally find optimal for 1 sec change for LCD display
+        SysTick_delay(333); //change 230 to 333 to be exact. 250 was experimentally find optimal for 1 sec change for LCD display
     }
 }
 
@@ -72,7 +73,7 @@ void init_user_input_WDT_timer(){
         /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
         MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
         MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
+//        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
 
         /* Configuring WDT in interval mode to trigger every 128K clock iterations.
         * This comes out to roughly every 4 seconds */
@@ -86,7 +87,13 @@ void init_user_input_WDT_timer(){
         MAP_WDT_A_startTimer();
 }
 
-
+void get_clock(){
+    aclk = CS_getACLK();
+    mclk = CS_getMCLK();
+    smclk = CS_getSMCLK();
+    hsmclk = CS_getHSMCLK();
+    bclk = CS_getBCLK();
+}
 
 void WDT_A_IRQHandler(void)
  {

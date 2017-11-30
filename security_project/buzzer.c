@@ -10,6 +10,7 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include<string.h>
+
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
@@ -23,8 +24,8 @@
 #include <string.h>
 #include "keypad.h"
 #include "alarm.h"
+#include "buzzer.h"
 
-void pwm(int period);
 void sounder_off();
 /*
 *       timeHigh = 1/(2 * toneFrequency) = period / 2
@@ -51,43 +52,13 @@ void sounder_off();
 int tone[] = {3830, 3400, 3038, 2864, 2550, 2272, 2028, 1912, 1818, 1667, 1429, 1250, 1111};
 int low = 3830;
 int high = 3038;
-/*
-int main(void)
-{
-    // Stop Watchdog
-    MAP_WDT_A_holdTimer();
-    SysTick_Init();
 
-    while(1)
-    {
-
-            // Output pin 2.6
-            pwm(high);
-            SysTick_delay(700);
-
-            sounder_off();
-            SysTick_delay(400);
-
-            pwm(high);
-            SysTick_delay(700);
-
-            sounder_off();
-            SysTick_delay(400);
-
-            pwm(low);
-            SysTick_delay(1500);
-
-            sounder_off();
-            SysTick_delay(400);
-    }
-}
-*/
 void sounder_off()
 {
-    pwm(0);
+    pwm_buzzer(0);
 }
 
-void pwm(int period)
+void pwm_buzzer(int period)
 {
     P2->DIR |=BIT6;
     P2->SEL0 |= BIT6;
@@ -104,31 +75,31 @@ void pwm(int period)
 
 void tone1()
 {
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(333);
         SysTick_delay(333);
-        pwm(tone[3]);
+        pwm_buzzer(tone[3]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[0]);
+        pwm_buzzer(tone[0]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[3]);
+        pwm_buzzer(tone[3]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[0]);
+        pwm_buzzer(tone[0]);
         SysTick_delay(250);
         SysTick_delay(250);
-        pwm(tone[5]);
+        pwm_buzzer(tone[5]);
         SysTick_delay(250);
         SysTick_delay(250);
 

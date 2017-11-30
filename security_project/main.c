@@ -23,10 +23,12 @@
 
 void setup_system();
 
+static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
+
 int main(void)
 {
-
     MAP_WDT_A_holdTimer();      // Stop the Watchdog timer
+    ADC_Init();                 // Initialize ADC
     Init48MHz();                // Set MCLK to 48MHz
     I2C_init();                 // Initialize I2C protocal for RTC Communication
     Init_PIR();                 // Initialize ports for PIR sensor
@@ -35,6 +37,9 @@ int main(void)
     Init_hall();                // Initialize ports for the hall effect sensors
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
+    init_user_input_WDT_timer();// Initialize WDT timer for idle state
+
+    get_clock();
 
     init_LED2();
 
@@ -42,8 +47,13 @@ int main(void)
     Init_alarm();               // Initialize alarm
 
 
-    // This is causing a problem when writing to non-volatile memory
-    //init_user_input_WDT_timer();// Initialize WDT timer for idle state
+
+         aclk = CS_getACLK();
+         mclk = CS_getMCLK();
+         smclk = CS_getSMCLK();
+         hsmclk = CS_getHSMCLK();
+         bclk = CS_getBCLK();
+
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
 
