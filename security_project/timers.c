@@ -2,9 +2,18 @@
 #include "driverlib.h"
 #include <stdio.h>
 #include <stdint.h>
+#include "keypad.h"
 
-volatile int user_timeout = 0;
-int count = 0;
+//volatile int user_timeout = 0;
+extern volatile int count = 0;
+
+void set_count(int value){
+    count = value;
+}
+
+int get_count(){
+    return count;
+}
 
 /*
  * Initialize the SysTick timer.
@@ -56,35 +65,36 @@ void Init48MHz(){
     MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 }
 
-//void init_user_input_WDT_timer(){
-//
-//        // WDT in interval mode is used as a timer counter for trigger idle status
-//
-//        /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
-//        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
-//        MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-//        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
-//
-//        /* Configuring WDT in interval mode to trigger every 128K clock iterations.
-//        * This comes out to roughly every 4 seconds */
-//        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_ACLK,
-//                                WDT_A_CLOCKITERATIONS_512K); //4s
-//
-//        /* Enabling interrupts and starting the watchdog timer*/
-//        MAP_Interrupt_enableInterrupt(INT_WDT_A);
-//        MAP_Interrupt_enableMaster();
-//
-//        MAP_WDT_A_startTimer();
-//}
-//
-//
-//
-//void WDT_A_IRQHandler(void)
-// {
-//     count++;
-//     if(count ==15 ){
-//         user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
-//         count=0;
-//     }
-//     return;
-// }
+void init_user_input_WDT_timer(){
+
+        // WDT in interval mode is used as a timer counter for trigger idle status
+
+        /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
+        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
+        MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
+
+        /* Configuring WDT in interval mode to trigger every 128K clock iterations.
+        * This comes out to roughly every 4 seconds */
+        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_ACLK,
+                                WDT_A_CLOCKITERATIONS_512K); //4s
+
+        /* Enabling interrupts and starting the watchdog timer*/
+        MAP_Interrupt_enableInterrupt(INT_WDT_A);
+        MAP_Interrupt_enableMaster();
+
+        MAP_WDT_A_startTimer();
+}
+
+
+
+void WDT_A_IRQHandler(void)
+ {
+     count++;
+     if(count ==15 ){
+         set_timeout(1);
+         //user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
+         count=0;
+     }
+     return;
+ }

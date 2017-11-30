@@ -60,9 +60,14 @@ void check_sensors(){
  * P2.7 Input to read sensor
  */
 void Init_PIR(){
-    P2SEL0 &= ~BIT(7);
-    P2SEL1 &= ~BIT(7); //conf as GPIO
-    P2DIR &= ~BIT(7); // make inputs
+    /* Configuring P2.7 as an input and enabling interrupts */
+    MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN7);
+    MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN7);
+    MAP_GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN7);
+
+//    P2SEL0 &= ~BIT(7);
+//    P2SEL1 &= ~BIT(7); //conf as GPIO
+//    P2DIR &= ~BIT(7); // make inputs
 }
 
 /*
@@ -132,23 +137,25 @@ void PORT2_IRQHandler(void)
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
     // If armed and not triggered, check for triggers
+    //!get_trigger_status() &&
     if( !get_trigger_status() && get_armed()){
 
         if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
                 //TODO Don: How can we use interrupt to change LED status? on/off
-                flashing_red();
-                set_trigger_status(1);
-                log_trigger_time(DOOR);
+//                flashing_red();
+//                set_trigger_status(1);
+//                log_trigger_time(DOOR);
 
         }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
-                flashing_red();
-                set_trigger_status(1);
-                log_trigger_time(WINDOW);
+//                flashing_red();
+//                set_trigger_status(1);
+//                log_trigger_time(WINDOW);
 
         }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
+            set_trigger_status(1);
+            log_trigger_time(PRESENCE);
                 flashing_red();
-                set_trigger_status(1);
-                log_trigger_time(PRESENCE);
+
 
         }
     }

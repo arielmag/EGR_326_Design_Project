@@ -18,6 +18,9 @@
 #include "timers.h"
 #include "buzzer.h"
 
+//extern volatile int user_timeout;
+//extern int count;
+
 void setup_system();
 
 int main(void)
@@ -36,7 +39,11 @@ int main(void)
 
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
+
+    // This is causing a problem when writing to non-volatile memory
     //init_user_input_WDT_timer();// Initialize WDT timer for idle state
+
+    // Note: Hall effect sensor detection is commented out for testing, test with PIR only
 
     // Hold down P1.1 on startup to reset system
     if(!(P1IN&BIT1)){

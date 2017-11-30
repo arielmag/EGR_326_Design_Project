@@ -11,6 +11,7 @@
 #include "sensors.h"
 #include "motor.h"
 #include "buzzer.h"
+#include "keypad.h"
 
 extern int month_flag;
 extern int day_flag;
@@ -33,6 +34,7 @@ void go_home(){
     while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
  */
     //user_timeout = 0;
+    set_timeout(0);
     clearScreen();
    while(check_pressed()==0)
    {
@@ -65,11 +67,12 @@ void display_menu(){
     display_menu_LCD();
     init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
 
-//    char menu = keypad_getkey();
-//    count = 0; // after every key pressed, reset the WDT idle timer and recount second
-//    MAP_WDT_A_clearTimer();
+    char menu = keypad_getkey();
+    set_count(0);
+    //count = 0; // after every key pressed, reset the WDT idle timer and recount second
+    MAP_WDT_A_clearTimer();
 
-    switch(keypad_getkey()){
+    switch(menu){
         // 1 to lock/unlock door
         case '1':
             lock_unlock_door();

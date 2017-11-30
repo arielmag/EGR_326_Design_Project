@@ -8,5 +8,7 @@ void SysTick_delay(uint16_t delay);
 void cas_sysDelay (uint16_t sec);
 void SysTick_delay(uint16_t delay);
 void init_user_input_WDT_timer();
+void set_count(int value);
+int get_count();
 
 #endif

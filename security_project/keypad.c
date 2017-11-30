@@ -5,7 +5,15 @@
 #include "timers.h"
 #include "LCD.h"
 
-extern volatile int user_timeout;
+int user_timeout;
+
+void set_timeout(int value){
+    user_timeout = value;
+}
+
+int get_timeout(){
+    return user_timeout;
+}
 
 /*
  * This function sets up ports for use of the keypad.
@@ -62,10 +70,10 @@ char keypad_getkey()
                if(col==2)                return '#';
            }
 
-//           if(user_timeout == 1){ // for idle state detection
-//               // idle state, go back to home screen
-//               go_home();
-//           }
+           if(user_timeout == 1){ // for idle state detection
+               // idle state, go back to home screen
+               go_home();
+           }
 
        }while(1);
 }

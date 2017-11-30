@@ -83,6 +83,7 @@ int arm_disarm_alarm(){
         if(get_armed()){
             arm_success_LCD();
             red();
+            set_trigger_status(0);
 
         }else{
             disarm_success_LCD();
@@ -611,7 +612,8 @@ int get_trigger_status(){
  * @return 1 triggered 0 not triggered
  */
 int get_triggered(){
-    return (check_PIR() || get_door_status() || get_window_status() || RTC_read_temperature() > 110 );
+    return (check_PIR() || RTC_read_temperature() > 110 );
+    //return (check_PIR() || get_door_status() || get_window_status() || RTC_read_temperature() > 110 );
 }
 
 /*
