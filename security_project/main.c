@@ -56,9 +56,9 @@ int main(void)
     SysTick_Init();             // Initialize SysTick timer
     init_user_input_WDT_timer();// Initialize WDT timer for idle state
 <<<<<<< HEAD
+<<<<<<< HEAD
     get_clock();
-
-
+=======
 
 /*Commented out by Don Nov. 22 for saving time to debug particular functions.
     reset_system(); // This function causes the system to be reset.
@@ -69,7 +69,55 @@ int main(void)
     if(check_reset()){          // Check if system is reset
         setup_system();         // Let the user setup time and password
     }
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
+    // If system already setup
+    go_home();
+*/
+    while(1)
+        {
+            go_home();
+
+<<<<<<< HEAD
+
+/*Commented out by Don Nov. 22 for saving time to debug particular functions.
+    reset_system(); // This function causes the system to be reset.
+                    // It should be run the first time this program is being set up
+                    // to trigger events for user to set up time and password.
+                    // Otherwise, comment this out.
+
+    if(check_reset()){          // Check if system is reset
+        setup_system();         // Let the user setup time and password
+=======
+        }
+}
+
+/*
+ * Display home screen and start system logic
+ */
+void go_home(){
+/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
+    display_home_screen();      // Display screen for home
+    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
+ */
+    user_timeout = 0;
+    clearScreen();
+   while(check_pressed()==0)
+   {
+       display_home_screen();
+   }
+
+    enter_password();       // Prompt user to enter password
+
+    while(1)
+    {
+        display_menu();         // Display the menu screen. Different options within
+                                // this function will change the screen displayed.
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+    }
+}
+
+<<<<<<< HEAD
 =======
 
 /*Commented out by Don Nov. 22 for saving time to debug particular functions.
@@ -152,6 +200,24 @@ void reset_system(){
     // TODO: Clear everything stored in memory
 }
 
+=======
+/*
+ * This function resets the system. It sets the password to a "default" value
+ * which causes the user to setup a new password and time. This function should
+ * be run the very first time the system is used or whenever a reset is desired.
+ */
+void reset_system(){
+
+    // Set password to default
+    int i;
+    for(i=0; i<4; i++){
+        saved_password[i] = default_password[i];
+    }
+
+    // TODO: Clear everything stored in memory
+}
+
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 /*
  * This function displays the home screen with the time, date,
  * alarm status, and temperature
@@ -159,8 +225,11 @@ void reset_system(){
 void display_home_screen(){
     display_home_screen_LCD();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
     /*
     ST7735_FillScreen(0);    // set screen to black
     uint16_t x=0, y=0;
@@ -183,6 +252,9 @@ void display_home_screen(){
 
 
      */
+<<<<<<< HEAD
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 }
 

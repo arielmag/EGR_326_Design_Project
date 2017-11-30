@@ -4,8 +4,11 @@
 #include <stdint.h>
 #include "alarm.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
@@ -108,6 +111,7 @@ void init_LED2()
     P2->DIR |= BIT0 | BIT1 | BIT2; //initialize on board LED2
     P2 ->OUT = 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 
 void ADC_Init() //credit: ADC14 MSP432ware
@@ -149,6 +153,8 @@ void ADC14_IRQHandler(void)
 //        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
 
     }
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 }

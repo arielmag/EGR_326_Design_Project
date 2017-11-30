@@ -5,7 +5,10 @@
 volatile int user_timeout=0;
 int count=0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 /*
@@ -67,14 +70,20 @@ void get_clock()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 void init_user_input_WDT_timer()
 {
     /*WDT in interval mdoe is used as a timer counter for trigger idle status*/
 =======
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
 void init_user_input_WDT_timer()
 {
     /*WDT in interval mdoe is used as a timer counter for trigger idle status
+<<<<<<< HEAD
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
     /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
@@ -96,6 +105,7 @@ void init_user_input_WDT_timer()
 void WDT_A_IRQHandler(void)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     count++;
     if(count ==15 )
@@ -108,6 +118,8 @@ void WDT_A_IRQHandler(void)
 //     ST7735_DrawString(0,1,string,ST7735_GREEN);
 
 =======
+=======
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 
     count++;
     if(count ==15 )
@@ -119,6 +131,9 @@ void WDT_A_IRQHandler(void)
 //     sprintf(string, "IRQ %i", count);
 //     ST7735_DrawString(0,1,string,ST7735_GREEN);
 
+<<<<<<< HEAD
+>>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
     return;
 }
