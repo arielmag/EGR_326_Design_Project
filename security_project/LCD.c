@@ -9,6 +9,13 @@
 #include "keypad.h"
 #include "alarm.h"
 #include "sensors.h"
+<<<<<<< HEAD
+=======
+#include "motor.h"
+#include "buzzer.h"
+#include "keypad.h"
+
+>>>>>>> ce347f13da3620c5d2c256b622f934adb58fa88d
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -20,6 +27,103 @@ extern volatile uint16_t curADCResult;
 volatile int DC_LCD; //duty cycle for lcd pwm
 void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
+}
+
+/*
+ * Display home screen and start system logic
+ */
+void go_home(){
+/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
+    display_home_screen();      // Display screen for home
+    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
+ */
+    //user_timeout = 0;
+    set_timeout(0);
+    clearScreen();
+   while(check_pressed()==0)
+   {
+       display_home_screen_LCD();
+   }
+
+    enter_password();       // Prompt user to enter password
+
+    while(1){
+        display_menu();         // Display the menu screen. Different options within
+                                // this function will change the screen displayed.
+    }
+}
+
+/*
+ * This function displays a menu with options:
+ *
+ * Main Menu
+ * 1. Lock/Unlock Door
+ * 2. Arm/Disarm Alarm
+ * 3. Check Sensors (Door/Window/Temperature/Presence)
+ * 4. View Log
+ * 5. Change Time
+ * 6. Change Password
+ * It returns to the home screen if idle for more than 1 minute. The user can scroll
+ * through the menu items using the up and down buttons and press an option by pressing
+ * the enter button. Pressing the back button returns to the home screen.
+ */
+void display_menu(){
+    display_menu_LCD();
+    init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
+
+    char menu = keypad_getkey();
+    set_count(0);
+    //count = 0; // after every key pressed, reset the WDT idle timer and recount second
+    MAP_WDT_A_clearTimer();
+
+    switch(menu){
+        // 1 to lock/unlock door
+        case '1':
+            lock_unlock_door();
+            break;
+
+        // 2 to arm/disarm alarm
+        case '2':
+            arm_disarm_alarm();
+            display_menu();
+            break;
+
+        // 3 to check sensors
+        case '3':
+            check_sensors();
+            break;
+
+        // 4 to view log
+        case '4':
+            display_log();
+            break;
+
+        // 5 to change time
+        case '5':
+            set_time_date();
+            RTC_write();    // Set up the input in RTC
+            RTC_read();     // Clear out junk values for first read
+            break;
+
+        // 6 to change password
+        case '6':
+            enter_password(); //verify the password first before reset
+            setup_password();
+            break;
+
+        //7  to play alarm for debug
+        case '7':
+            tone1();
+            break;
+        // '*' to go back to home
+        case HOME_KEY:
+            go_home();
+            break;
+
+        case ENTER_KEY:
+            go_home();
+            break;
+    }
 }
 
 void printDayLCD(char day) //read from RTC[3]
@@ -134,6 +238,10 @@ void printDateTimeStored_LCD(){
 
 }
 
+/*
+ * This function displays the home screen with the time, date,
+ * alarm status, and temperature
+ */
 void display_home_screen_LCD()
 {
       // clearScreen();
@@ -147,7 +255,7 @@ void display_home_screen_LCD()
            ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
        print_temperature();
-
+  
        y+=40;
        char string2[]={'D', 'A', 'T','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
        for(i=0; i<4; i++){
@@ -168,6 +276,14 @@ void display_home_screen_LCD()
        //TODO: Add the following lines into menu display loop
        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
        pwm_lcd(); //after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
+}
+
+void print_temperature()
+{
+    char str_temperature[40];
+   // ST7735_FillScreen(0);
+    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
+    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
 }
 
 void display_set_password()
@@ -236,6 +352,12 @@ void display_set_time_date()
 
 }
 
+/*
+ * This function displays a screen to prompt the user to setup the time,
+ * gets keypad input from user to set the time and displays
+ * the keypad input as the user enters a valid number. The time is then
+ * written to the RTC device.
+ */
 void set_time_date() //make sure delete the manually set date line in RTC_write
 {
 
@@ -667,6 +789,7 @@ void disarm_success_LCD(){
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
     ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
 }
+<<<<<<< HEAD
 
 void print_temperature()
 {
@@ -692,3 +815,5 @@ TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP
         |TIMER_A_CTL_CLR;
 
 }
+=======
+>>>>>>> ce347f13da3620c5d2c256b622f934adb58fa88d
