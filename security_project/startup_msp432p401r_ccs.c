@@ -50,7 +50,9 @@ extern void _c_int00(void);
 
 /* External declaration for system initialization function                  */
 extern void SystemInit(void);
-
+//extern void SysTick_Handler (void);
+extern void PORT2_IRQHandler (void);
+extern void WDT_A_IRQHandler (void); //for detecting user input timeout of 60s
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;
 

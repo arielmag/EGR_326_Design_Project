@@ -35,10 +35,12 @@ int main(void)
     Init_hall();                // Initialize ports for the hall effect sensors
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
+
     init_LED2();
 
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
+
 
     // This is causing a problem when writing to non-volatile memory
     //init_user_input_WDT_timer();// Initialize WDT timer for idle state

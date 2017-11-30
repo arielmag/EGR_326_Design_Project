@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "keypad.h"
 #include "timers.h"
+
 #include "LCD.h"
 
 int user_timeout;
@@ -14,6 +15,7 @@ void set_timeout(int value){
 int get_timeout(){
     return user_timeout;
 }
+
 
 /*
  * This function sets up ports for use of the keypad.
@@ -76,6 +78,7 @@ char keypad_getkey()
            }
 
        }while(1);
+
 }
 
 int debounce(int row)

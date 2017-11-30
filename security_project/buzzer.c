@@ -132,7 +132,6 @@ void tone1()
         SysTick_delay(250);
         SysTick_delay(250);
 
-
         sounder_off();
         cas_sysDelay(1);
 }
