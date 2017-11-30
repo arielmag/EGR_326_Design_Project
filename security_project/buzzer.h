@@ -8,8 +8,8 @@
 #ifndef BUZZER_H_
 #define BUZZER_H_
 
-
-void pwm_buzzer(int period);
+void tone1();
+void pwm(int period);
 void sounder_off();
 void tone1();
 #endif /* BUZZER_H_ */

@@ -10,11 +10,14 @@
 #include "alarm.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "sensors.h"
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 extern int month_flag;
 extern int day_flag;
 extern int year_flag;
@@ -22,8 +25,7 @@ extern int DOW_flag;
 extern int hour_flag;
 extern int min_flag;
 extern int sec_flag;
-extern volatile uint16_t curADCResult;
-volatile int DC_LCD; //duty cycle for lcd pwm
+
 void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
 }
@@ -170,12 +172,16 @@ void display_home_screen_LCD()
            ST7735_DrawChar(x+(i*20), y, string3[i], ST7735_Color565(180, 240, 250), 0, 2);
        }
        printTimeLCD();
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
        //TODO: Add the following lines into menu display loop
        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
        pwm_lcd(); //after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
+=======
+       cas_sysDelay(1);
+>>>>>>> parent of 7e165f4... LCD backlight activated
 }
 
 =======
@@ -688,6 +694,7 @@ void print_temperature()
     ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 void pwm_lcd()
 {
@@ -707,3 +714,5 @@ TIMER_A2->CTL = TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_MC__UP
 }
 =======
 >>>>>>> parent of ce347f1... Fixed duplicate function
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated

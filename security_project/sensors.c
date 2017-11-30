@@ -5,12 +5,15 @@
 #include "alarm.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 
 /*
  * Initialize pins for the the PIR sensor.
@@ -113,6 +116,7 @@ void init_LED2()
 <<<<<<< HEAD
 <<<<<<< HEAD
 }
+<<<<<<< HEAD
 
 void ADC_Init() //credit: ADC14 MSP432ware
 {
@@ -158,3 +162,5 @@ void ADC14_IRQHandler(void)
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 }
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated

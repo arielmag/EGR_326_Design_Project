@@ -16,9 +16,12 @@ void green();
 void red();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void ADC_Init();
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 #endif

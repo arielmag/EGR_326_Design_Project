@@ -53,7 +53,6 @@ extern void SystemInit(void);
 //extern void SysTick_Handler (void);
 extern void PORT2_IRQHandler (void);
 extern void WDT_A_IRQHandler (void); //for detecting user input timeout of 60s
-extern void ADC14_IRQHandler (void);
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;
 
@@ -111,7 +110,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* EUSCIB1 ISR               */
     defaultISR,                             /* EUSCIB2 ISR               */
     defaultISR,                             /* EUSCIB3 ISR               */
-    ADC14_IRQHandler,                             /* ADC14 ISR                 */
+    defaultISR,                             /* ADC14 ISR                 */
     defaultISR,                             /* T32_INT1 ISR              */
     defaultISR,                             /* T32_INT2 ISR              */
     defaultISR,                             /* T32_INTC ISR              */

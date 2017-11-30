@@ -6,11 +6,14 @@ volatile int user_timeout=0;
 int count=0;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 /*
  * Initialize the SysTick timer.
  */
@@ -39,7 +42,7 @@ void cas_sysDelay (uint16_t sec)
 {   volatile int i;
     for(i=0; i<sec*3; i++)
     {
-        SysTick_delay(333); //change 230 to 333 to be exact. 250 was experimentally find optimal for 1 sec change for LCD display
+        SysTick_delay(230); //change 230 to 333 to be exact. 250 was experimentally find optimal for 1 sec change for LCD display
     }
 }
 
@@ -60,19 +63,13 @@ void Init48MHz(){
     /* Initializing MCLK to HFXT (effectively 48MHz) */
     MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 }
-void get_clock()
-{
-    aclk = CS_getACLK();
-    mclk = CS_getMCLK();
-    smclk = CS_getSMCLK();
-    hsmclk = CS_getHSMCLK();
-    bclk = CS_getBCLK();
-}
+
 
 <<<<<<< HEAD
 <<<<<<< HEAD
 void init_user_input_WDT_timer()
 {
+<<<<<<< HEAD
     /*WDT in interval mdoe is used as a timer counter for trigger idle status*/
 =======
 =======
@@ -85,6 +82,9 @@ void init_user_input_WDT_timer()
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+    /*WDT in interval mdoe is used as a timer counter for trigger idle status
+>>>>>>> parent of 7e165f4... LCD backlight activated
 
     /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);

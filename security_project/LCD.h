@@ -23,11 +23,14 @@ void disarm_success_LCD();
 void print_temperature();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void pwm_lcd();
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;

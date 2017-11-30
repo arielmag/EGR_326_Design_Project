@@ -10,9 +10,12 @@ void SysTick_delay(uint16_t delay);
 void init_user_input_WDT_timer();
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 void get_clock(void);
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
 =======
 >>>>>>> parent of 4da6ed5... Merge pull request #1 from arielmag/Log
+=======
+>>>>>>> parent of 7e165f4... LCD backlight activated
 #endif
