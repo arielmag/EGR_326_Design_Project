@@ -42,7 +42,7 @@ int main(void)
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
-    init_WDT();                 // Initialize watchdog timer, it runs 1KHz at 2G iterations
+    init_WDT();                 // Initialize watchdog timer, 128KHz
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 

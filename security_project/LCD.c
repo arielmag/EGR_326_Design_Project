@@ -40,7 +40,7 @@ void go_home(){
    {
        display_home_screen_LCD();
    }
-
+   set_count(0);
     enter_password();       // Prompt user to enter password
 
     while(1){
@@ -283,7 +283,7 @@ void print_temperature()
 }
 
 void init_pwm_lcd() //using timerA1
-{
+{   DC_LCD = 750; //default duty cycle
 
     P5->DIR |=BIT6;
     P5->SEL0 |= BIT6;
@@ -400,9 +400,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
 
         ST7735_DrawString(0,++cur_row,"Enter month:",ST7735_GREEN); //Print Enter month:__
         calendar[0] = keypad_getkey();              //get first digit in char form of month
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[0]);
         ST7735_DrawString(15,cur_row,temp,ST7735_GREEN);
         calendar[1] = keypad_getkey();              //get second digit in char form of month
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[1]);
         ST7735_DrawString(16,cur_row++,temp,ST7735_GREEN);
         ck_valid();
@@ -442,9 +444,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     while(day_flag ==0){
         ST7735_DrawString(0,cur_row,"Enter Day:",ST7735_GREEN); //Print Enter day:__
         calendar[2] = keypad_getkey();              //get first digit of day
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[2]);
               ST7735_DrawString(15,cur_row,temp,ST7735_GREEN);
         calendar[3] = keypad_getkey();              //get second digit of day
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[3]);
         ST7735_DrawString(16,cur_row++,temp,ST7735_GREEN);
         ck_valid();
@@ -483,9 +487,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     {
         ST7735_DrawString(0,cur_row,"Enter Year:",ST7735_GREEN); //Print Enter year:__
         calendar[4] = keypad_getkey();              //get first digit of year
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[4]);
             ST7735_DrawString(15,cur_row,temp,ST7735_GREEN);
         calendar[5] = keypad_getkey();              //get second digit of year
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[5]);
         ST7735_DrawString(16,cur_row++,temp,ST7735_GREEN);
         ck_valid();
@@ -525,6 +531,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     {
     ST7735_DrawString(0,cur_row,"Enter Day of week:",ST7735_GREEN); //Print Enter year:__
     calendar[6] = keypad_getkey();
+    set_count(0);                               //reset idle count
     sprintf(temp, "%c",calendar[6]);
                   ST7735_DrawString(19,cur_row,temp,ST7735_GREEN);
     //draw character that was just entered at calendar[6] same row
@@ -565,9 +572,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     {
         ST7735_DrawString(0,cur_row,"Enter Hour:",ST7735_GREEN); //Print Enter hour:__
         calendar[7] = keypad_getkey();              //get first digit of hour
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[7]);
               ST7735_DrawString(11,cur_row,temp,ST7735_GREEN);
         calendar[8] = keypad_getkey();              //get second digit of hour
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[8]);
         ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
@@ -604,9 +613,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
 
         ST7735_DrawString(0,cur_row,"Enter min:",ST7735_GREEN); //Print Enter min:__
         calendar[9] = keypad_getkey();              //get first digit of min
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[9]);
             ST7735_DrawString(11,cur_row,temp,ST7735_GREEN);
         calendar[10] = keypad_getkey();              //get second digit of min
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[10]);
             ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
@@ -642,9 +653,11 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
     {
         ST7735_DrawString(0,cur_row,"Enter sec:",ST7735_GREEN); //Print Enter sec:__
         calendar[11] = keypad_getkey();              //get first digit of min
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[11]);
             ST7735_DrawString(11,cur_row,temp,ST7735_GREEN);
         calendar[12] = keypad_getkey();              //get second digit of min
+        set_count(0);                               //reset idle count
         sprintf(temp, "%c",calendar[12]);
             ST7735_DrawString(12,cur_row++,temp,ST7735_GREEN);
         ck_valid();
