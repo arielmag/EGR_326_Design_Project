@@ -61,6 +61,8 @@ void Init_motor(){
 
     P5-> DIR |= BIT2;
     P3-> DIR |= BIT5 | BIT6 |BIT7;
+    P5-> OUT &= ~BIT2;
+    P3-> OUT &= ~(BIT5 | BIT6 |BIT7);
 
 }
 

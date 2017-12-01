@@ -407,6 +407,7 @@ int verify_entry(int isFirstSetup){
         // Don't count * or # keypad entries as a digit
         do{
             typed_password[i] = keypad_getkey();
+            set_count(0); //each time a value is entered, reset count
 
             // If the user presses home and this is not the first time setting up the system, go home
             if(typed_password[i] == HOME_KEY && !isFirstSetup)
@@ -496,6 +497,7 @@ void display_arm_disarm_log(){
         ST7735_DrawString(x, y+=1, "refresh.", textColor);
 
         key = keypad_getkey();
+        set_count(0);
 
     }while(key != HOME_KEY && key != ENTER_KEY);
 
@@ -548,6 +550,7 @@ void display_trigger_log(){
         ST7735_DrawString(x, y+=1, "refresh.", textColor);
 
         key = keypad_getkey();
+        set_count(0);
 
     }while(key != HOME_KEY && key != ENTER_KEY);
 
@@ -640,8 +643,12 @@ void display_log(){
     ST7735_DrawString(0, y+=2, "2. View Trigger", textColor);
     ST7735_DrawString(0, y+=1, "   Events", textColor);
 
+    ST7735_DrawString(0, y+=2, "Note: Any other key", textColor);
+    ST7735_DrawString(0, y+=1, "      return to menu", textColor);
+    char log_select = keypad_getkey();
+    set_count(0); //each option will clear
 
-    switch(keypad_getkey()){
+    switch(log_select){
         // 1 to view arm/disarm log
         case '1':
             display_arm_disarm_log();

@@ -52,13 +52,12 @@ extern void _c_int00(void);
 extern void SystemInit(void);
 //extern void SysTick_Handler (void);
 extern void PORT2_IRQHandler (void);
-extern void WDT_A_IRQHandler (void); //for detecting user input timeout of 60s
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;
 
 
 /* External declarations for the interrupt handlers used by the application. */
-extern void WDT_A_IRQHandler(void); // for detecting user input timeout of 60s
+extern void T32_INT1_IRQHandler(void); // for detecting user input timeout of 60s
 extern void ADC14_IRQHandler(void);
 
 
@@ -89,7 +88,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* PSS ISR                   */
     defaultISR,                             /* CS ISR                    */
     defaultISR,                             /* PCM ISR                   */
-    WDT_A_IRQHandler,                             /* WDT ISR                   */
+    defaultISR,                             /* WDT ISR                   */
     defaultISR,                             /* FPU ISR                   */
     defaultISR,                             /* FLCTL ISR                 */
     defaultISR,                             /* COMP0 ISR                 */
@@ -111,7 +110,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* EUSCIB2 ISR               */
     defaultISR,                             /* EUSCIB3 ISR               */
     ADC14_IRQHandler,                             /* ADC14 ISR                 */
-    defaultISR,                             /* T32_INT1 ISR              */
+    T32_INT1_IRQHandler,                             /* T32_INT1 ISR              */
     defaultISR,                             /* T32_INT2 ISR              */
     defaultISR,                             /* T32_INTC ISR              */
     defaultISR,                             /* AES ISR                   */

@@ -32,10 +32,7 @@ void Init_LCD(){
  * Display home screen and start system logic
  */
 void go_home(){
-/* commented out by Don Nov 22 due to stuck too in getkey result in screen can't be updated with 1 sec change
-    display_home_screen();      // Display screen for home
-    while(keypad_getkey() != ENTER_KEY );    // Wait for user to press enter # to switch screens
- */
+
     //user_timeout = 0;
     set_timeout(0);
     clearScreen();

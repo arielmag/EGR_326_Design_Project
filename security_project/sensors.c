@@ -87,18 +87,18 @@ void check_sensors(){
         ST7735_DrawString(x, y+=1, "Presence", textColor);
         ST7735_DrawString(x+12, y, check_PIR() ? "DETECTED" : "NONE    ", textColor);
 
-        ST7735_DrawString(x, y+=2, "Press any digit to", textColor);
-        ST7735_DrawString(x, y+=1, "refresh.", textColor);
+        ST7735_DrawString(x, y+=2, "hold any digit to", textColor);
+        ST7735_DrawString(x, y+=1, "return to menu.", textColor);
 
-        key = keypad_getkey();
-        set_count(0);
-    }while(key != HOME_KEY && key != ENTER_KEY);
-
-    if(key == HOME_KEY)
-        go_home();
-
-    if(key == ENTER_KEY)
-        display_menu();
+       // key = keypad_getkey();
+       // set_count(0);
+    }while(check_pressed()==0); //if nothing is pressed
+    display_menu();
+//    if(key == HOME_KEY)
+//        go_home();
+//
+//    if(key == ENTER_KEY)
+//        display_menu();
 }
 
 /*

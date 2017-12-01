@@ -66,25 +66,16 @@ void Init48MHz(){
     MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);
 }
 
-void init_user_input_WDT_timer(){
-
-        // WDT in interval mode is used as a timer counter for trigger idle status
-
-        /* Setting ACLK to REFO at 128Khz for LF mode @ 128KHz*/
-        MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
-        MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-//        MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
-
-        /* Configuring WDT in interval mode to trigger every 128K clock iterations.
-        * This comes out to roughly every 4 seconds */
-        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_ACLK,
-                                WDT_A_CLOCKITERATIONS_512K); //4s
-
-        /* Enabling interrupts and starting the watchdog timer*/
-        MAP_Interrupt_enableInterrupt(INT_WDT_A);
-        MAP_Interrupt_enableMaster();
-
-        MAP_WDT_A_startTimer();
+void init_user_input_timer32(){
+    /* Configuring Timer32 to 128000 (1s) of MCLK in periodic mode */
+     MAP_Timer32_initModule(TIMER32_BASE, TIMER32_PRESCALER_1, TIMER32_32BIT,
+                            TIMER32_FREE_RUN_MODE);
+     MAP_Timer32_setCount(TIMER32_BASE,48000000);
+     MAP_Timer32_enableInterrupt(TIMER32_BASE);
+     MAP_Timer32_startTimer(TIMER32_BASE, true);
+     /* Enabling interrupts */
+     MAP_Interrupt_enableInterrupt(INT_T32_INT1);
+     MAP_Interrupt_enableMaster();
 }
 
 void get_clock(){
@@ -95,14 +86,17 @@ void get_clock(){
     bclk = CS_getBCLK();
 }
 
-void WDT_A_IRQHandler(void)
- {
-     count++;
-     if(count ==15 ){
-         set_timeout(1);
-         //user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
-         count=0;
-     }
-     return;
- }
 
+void T32_INT1_IRQHandler(void)
+{
+    MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
+    MAP_Timer32_setCount(TIMER32_BASE,48000000);
+    count++;
+    if(count ==60 ){
+        set_timeout(1);
+        //user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
+        count=0;
+    }
+    return;
+
+}
