@@ -86,6 +86,23 @@ void get_clock(){
     bclk = CS_getBCLK();
 }
 
+void init_WDT()
+{
+
+    /* Setting ACLK to REFO at 128Khz*/
+    MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
+    MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
+    MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
+
+    /* Configuring WDT to timeout after 512k iterations of SMCLK, at 128k,
+     * this will roughly equal 4 seconds*/
+    MAP_SysCtl_setWDTTimeoutResetType(SYSCTL_SOFT_RESET);
+    MAP_WDT_A_initWatchdogTimer(WDT_A_CLOCKSOURCE_ACLK,
+                                WDT_A_CLOCKITERATIONS_2G);
+
+    MAP_WDT_A_startTimer(); //start watchdog timer
+
+}
 
 void T32_INT1_IRQHandler(void)
 {
@@ -101,3 +118,4 @@ void T32_INT1_IRQHandler(void)
     return;
 
 }
+

@@ -11,5 +11,6 @@ void init_user_input_timer32();
 void set_count(int value);
 int get_count();
 void get_clock(void);
+void init_WDT(void);
 
 #endif

@@ -37,13 +37,14 @@ int main(void)
     Init_hall();                // Initialize ports for the hall effect sensors
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
-    init_user_input_timer32();// Initialize WDT timer for idle state
-    get_clock();
+    init_user_input_timer32();  // Initialize WDT timer for idle state
     init_LED2();
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
-    init_pwm_lcd();
+    init_pwm_lcd();             // Initialize pwm for driving LED back lighting
+    init_WDT();                 // Initialize watchdog timer, it runs 1KHz at 2G iterations
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
+    get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 
     // Hold down P1.1 on startup to reset system
     if(!(P1IN&BIT1)){
