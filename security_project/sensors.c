@@ -91,6 +91,7 @@ void check_sensors(){
         ST7735_DrawString(x, y+=1, "refresh.", textColor);
 
         key = keypad_getkey();
+        set_count(0);
     }while(key != HOME_KEY && key != ENTER_KEY);
 
     if(key == HOME_KEY)
