@@ -270,8 +270,8 @@ void display_home_screen_LCD()
        printTimeLCD();
 
        // TODO: Add the following lines into menu display loop
-       MAP_ADC14_toggleConversionTrigger();
-       pwm_lcd(); // after ADC interrupt, ADC result will be updated along with the duty cycle for pwm
+
+
 }
 
 void print_temperature()
@@ -282,9 +282,9 @@ void print_temperature()
     ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
 }
 
-void pwm_lcd()
+void init_pwm_lcd() //using timerA1
 {
-    DC_LCD = curADCResult / 10; // /85 originally
+
     P5->DIR |=BIT6;
     P5->SEL0 |= BIT6;
     P5 -> SEL1 &= ~(BIT6);

@@ -91,6 +91,7 @@ void T32_INT1_IRQHandler(void)
 {
     MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
     MAP_Timer32_setCount(TIMER32_BASE,48000000);
+    MAP_ADC14_toggleConversionTrigger(); //every second trigger ADC conversion
     count++;
     if(count ==60 ){
         set_timeout(1);

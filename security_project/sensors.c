@@ -10,7 +10,7 @@
 
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
-
+extern volatile int DC_LCD;
 // Creadit: ADC14 MSP432ware
 void ADC_Init() //credit: ADC14 MSP432ware
 {
@@ -50,7 +50,10 @@ void ADC14_IRQHandler(void)
          curADCResult = MAP_ADC14_getResult(ADC_MEM0);
          normalizedADCRes = (curADCResult * 3.3 ) / 16384; //assume 3.3 V ref. 14 bits
         //        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
+         //DC_LCD = curADCResult / 10; // /85 originally
+         TIMER_A2 ->CCR[1] = curADCResult / 10; //duty cycle
     }
+
 }
 
 /*

@@ -23,7 +23,7 @@ void disarm_success_LCD();
 void go_home();
 void display_menu();
 void print_temperature();
-void pwm_lcd();
+void init_pwm_lcd();
 
 char return_char_day[4];
 char return_char_month[4];

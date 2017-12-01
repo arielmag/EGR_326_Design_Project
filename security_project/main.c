@@ -42,7 +42,7 @@ int main(void)
     init_LED2();
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
-
+    init_pwm_lcd();
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
 
     // Hold down P1.1 on startup to reset system
