@@ -38,22 +38,10 @@ int main(void)
     Init_motor();               // Initialize ports for the motor
     Init_LCD();                 // Initialize ports for the LCD
     init_user_input_WDT_timer();// Initialize WDT timer for idle state
-
     get_clock();
-
     init_LED2();
-
     SysTick_Init();             // Initialize the SysTick timer
     Init_alarm();               // Initialize alarm
-
-
-
-         aclk = CS_getACLK();
-         mclk = CS_getMCLK();
-         smclk = CS_getSMCLK();
-         hsmclk = CS_getHSMCLK();
-         bclk = CS_getBCLK();
-
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
 
