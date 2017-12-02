@@ -7,6 +7,7 @@
 #include "keypad.h"
 #include "RTC.h"
 #include "ST7735.h"
+#include "buzzer.h"
 
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
@@ -200,10 +201,12 @@ void PORT2_IRQHandler(void)
 //                set_trigger_status(1);
 //                log_trigger_time(WINDOW);
 
+
         }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
             set_trigger_status(1);
             log_trigger_time(PRESENCE);
-                flashing_red();
+            flashing_red();
+            tone1();
 
 
         }

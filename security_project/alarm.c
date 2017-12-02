@@ -9,6 +9,7 @@
 #include "timers.h"
 #include "ST7735.h"
 #include "string.h"
+#include "buzzer.h"
 
 char default_password[] = {'a', 'a', 'a', 'a'}; // Default password for the system
 
@@ -86,6 +87,7 @@ int arm_disarm_alarm(){
             set_trigger_status(0);
 
         }else{
+            sounder_off();
             disarm_success_LCD();
             green();
             set_trigger_status(0);
@@ -490,6 +492,16 @@ void display_arm_disarm_log(){
             for(i=0;i<arm_disarm_log[0];i++){
                     sprintf(print_str,"%02x/%02x/%02x %02x:%02x:%02x %s", arm_disarm_log[7+(i*8)], arm_disarm_log[6+(i*8)], arm_disarm_log[8+(i*8)], arm_disarm_log[4+(i*8)], arm_disarm_log[3+(i*8)], arm_disarm_log[2+(i*8)], arm_disarm_log[1+(i*8)] ? "ARM" : "D/A");
                     ST7735_DrawString(0, y+=1, print_str, ST7735_WHITE);
+
+                    switch(arm_disarm_log[1+(i*8)]){
+                        case 1:
+                            ST7735_DrawString(0, y+=1, "    Type: ARM", ST7735_WHITE);
+                        break;
+
+                        case 0:
+                            ST7735_DrawString(0, y+=1, "    Type: DISARM", ST7735_WHITE);
+                        break;
+                    }
             }
         }
 
@@ -543,6 +555,24 @@ void display_trigger_log(){
             for(i=0;i<trigger_log[0];i++){
                     sprintf(print_str,"%02x/%02x/%02x %02x:%02x:%02x", trigger_log[7+(i*8)], trigger_log[6+(i*8)], trigger_log[8+(i*8)], trigger_log[4+(i*8)], trigger_log[3+(i*8)], trigger_log[2+(i*8)]);
                     ST7735_DrawString(0, y+=1, print_str, ST7735_WHITE);
+
+                    switch(trigger_log[1+(i*8)]){
+                        case DOOR:
+                            ST7735_DrawString(0, y+=1, "    Type: DOOR", ST7735_WHITE);
+                        break;
+
+                        case WINDOW:
+                            ST7735_DrawString(0, y+=1, "    Type: WINDOW", ST7735_WHITE);
+                        break;
+
+                        case TEMPERATURE:
+                            ST7735_DrawString(0, y+=1, "    Type: TEMPERATURE", ST7735_WHITE);
+                        break;
+
+                        case PRESENCE:
+                            ST7735_DrawString(0, y+=1, "    Type: PRESENCE", ST7735_WHITE);
+                        break;
+                    }
             }
         }
 

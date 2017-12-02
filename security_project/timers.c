@@ -92,7 +92,7 @@ void init_WDT()
     /* Setting ACLK to REFO at 128Khz*/
     MAP_CS_setReferenceOscillatorFrequency(CS_REFO_128KHZ);
     MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_128);
-    MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
+    //MAP_PCM_setPowerState(PCM_AM_LF_VCORE0);
 
     /* Configuring WDT to timeout after 512k iterations of SMCLK, at 128k,
      * this will roughly equal 4 seconds*/

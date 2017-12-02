@@ -26,7 +26,6 @@
 #include "alarm.h"
 #include "buzzer.h"
 
-void sounder_off();
 /*
 *       timeHigh = 1/(2 * toneFrequency) = period / 2
 *
