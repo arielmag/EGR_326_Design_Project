@@ -59,7 +59,7 @@ void Init_alarm(){
     P1OUT |= BIT1; // P1.0 are pull-up
 
     set_armed(0); // Disarm system and no triggers
-    set_trigger_status(0);
+    set_trigger_status(NONE);
     green();
 
     get_saved_password();
@@ -84,13 +84,13 @@ int arm_disarm_alarm(){
         if(get_armed()){
             arm_success_LCD();
             red();
-            set_trigger_status(0);
+            set_trigger_status(NONE);
 
         }else{
             sounder_off();
             disarm_success_LCD();
             green();
-            set_trigger_status(0);
+            set_trigger_status(NONE);
         }
         cas_sysDelay(2);
         return 1;
@@ -339,7 +339,7 @@ void setup_password(){
         do{
             saved_password[i] = keypad_getkey();
 
-        }while(saved_password[i] == ENTER_KEY || saved_password[i] == HOME_KEY);
+        }while(saved_password[i] == BACK_KEY || saved_password[i] == HOME_KEY);
 
         // Display * as password characters are typed
         ST7735_DrawCharS(x, y, '*', textColor, bgColor, 2);
@@ -412,10 +412,10 @@ int verify_entry(int isFirstSetup){
             set_count(0); //each time a value is entered, reset count
 
             // If the user presses home and this is not the first time setting up the system, go home
-            if(typed_password[i] == HOME_KEY && !isFirstSetup)
+            if(typed_password[i] == HOME_KEY || typed_password[i] == BACK_KEY && !isFirstSetup)
                 go_home();
 
-        }while(typed_password[i] == ENTER_KEY || typed_password[i] == HOME_KEY);
+        }while(typed_password[i] == BACK_KEY || typed_password[i] == HOME_KEY);
 
         // Display * as password characters are typed
         ST7735_DrawCharS(x, y, '*', textColor, bgColor, 2);
@@ -467,12 +467,12 @@ void display_arm_disarm_log(){
 
     char key;
 
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLACK;
+
+    ST7735_FillScreen(0);    // set screen to black
+
     do{
-        int16_t textColor = ST7735_WHITE;
-        int16_t bgColor = ST7735_BLACK;
-
-        ST7735_FillScreen(0);    // set screen to black
-
         get_saved_arm_disarm_log();
 
         int x=0, y=0, i;
@@ -490,7 +490,7 @@ void display_arm_disarm_log(){
 
         }else if(arm_disarm_log[0] <6){
             for(i=0;i<arm_disarm_log[0];i++){
-                    sprintf(print_str,"%02x/%02x/%02x %02x:%02x:%02x %s", arm_disarm_log[7+(i*8)], arm_disarm_log[6+(i*8)], arm_disarm_log[8+(i*8)], arm_disarm_log[4+(i*8)], arm_disarm_log[3+(i*8)], arm_disarm_log[2+(i*8)], arm_disarm_log[1+(i*8)] ? "ARM" : "D/A");
+                    sprintf(print_str,"%02x/%02x/%02x %02x:%02x:%02x", arm_disarm_log[7+(i*8)], arm_disarm_log[6+(i*8)], arm_disarm_log[8+(i*8)], arm_disarm_log[4+(i*8)], arm_disarm_log[3+(i*8)], arm_disarm_log[2+(i*8)]);
                     ST7735_DrawString(0, y+=1, print_str, ST7735_WHITE);
 
                     switch(arm_disarm_log[1+(i*8)]){
@@ -505,18 +505,15 @@ void display_arm_disarm_log(){
             }
         }
 
-        ST7735_DrawString(x, y+=2, "Press any digit to", textColor);
-        ST7735_DrawString(x, y+=1, "refresh.", textColor);
-
         key = keypad_getkey();
         set_count(0);
 
-    }while(key != HOME_KEY && key != ENTER_KEY);
+    }while(key != HOME_KEY && key != BACK_KEY);
 
     if(key == HOME_KEY)
         go_home();
 
-    if(key == ENTER_KEY)
+    if(key == BACK_KEY)
         display_log();
 }
 
@@ -582,30 +579,13 @@ void display_trigger_log(){
         key = keypad_getkey();
         set_count(0);
 
-    }while(key != HOME_KEY && key != ENTER_KEY);
+    }while(key != HOME_KEY && key != BACK_KEY);
 
     if(key == HOME_KEY)
         go_home();
 
-    if(key == ENTER_KEY)
+    if(key == BACK_KEY)
         display_log();
-}
-
-/*
- * This function is called when the system is armed and triggered.
- * The alarm makes noises continuously until alarm_off() is called
- * or power is removed from the system.
- */
-void sound_alarm(){
-
-
-}
-
-/*
- * This function is called turns the alarm off after a system trigger.
- */
-void alarm_off(){
-
 }
 
 /*
@@ -657,7 +637,6 @@ int get_triggered(){
  * 2. View Trigger Events
  */
 void display_log(){
-    //TODO display on LCD
 
     int x=0, y=0;
     int16_t textColor = ST7735_WHITE;
@@ -665,33 +644,36 @@ void display_log(){
 
     ST7735_FillScreen(0);    // set screen to black
 
-    ST7735_DrawString2(x, y, "View Log", textColor, bgColor);
+    while(1){
 
-    ST7735_DrawString(0, y+=3, "1. View Arm/Disarm", textColor);
-    ST7735_DrawString(0, y+=1, "   Events", textColor);
+        ST7735_DrawString2(x, y, "View Log", textColor, bgColor);
 
-    ST7735_DrawString(0, y+=2, "2. View Trigger", textColor);
-    ST7735_DrawString(0, y+=1, "   Events", textColor);
+        ST7735_DrawString(0, y+=3, "1. View Arm/Disarm", textColor);
+        ST7735_DrawString(0, y+=1, "   Events", textColor);
 
-    ST7735_DrawString(0, y+=2, "Note: Any other key", textColor);
-    ST7735_DrawString(0, y+=1, "      return to menu", textColor);
-    char log_select = keypad_getkey();
-    set_count(0); //each option will clear
+        ST7735_DrawString(0, y+=2, "2. View Trigger", textColor);
+        ST7735_DrawString(0, y+=1, "   Events", textColor);
 
-    switch(log_select){
-        // 1 to view arm/disarm log
-        case '1':
-            display_arm_disarm_log();
-            break;
+    //    ST7735_DrawString(0, y+=2, "Note: Any other key", textColor);
+    //    ST7735_DrawString(0, y+=1, "      return to menu", textColor);
+        char log_select = keypad_getkey();
+        set_count(0); //each option will clear
 
-        // 2 to view trigger events
-        case '2':
-            display_trigger_log();
-            break;
+        switch(log_select){
+            // 1 to view arm/disarm log
+            case '1':
+                display_arm_disarm_log();
+                break;
 
-        // Enter key to return to menu
-        case ENTER_KEY:
-            display_menu();
+            // 2 to view trigger events
+            case '2':
+                display_trigger_log();
+                break;
+
+            // Enter key to return to menu
+            case BACK_KEY:
+                display_menu();
+        }
     }
 }
 

@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "buzzer.h"
 #include "keypad.h"
+#include "sensors.h"
 
 extern int month_flag;
 extern int day_flag;
@@ -36,16 +37,19 @@ void go_home(){
     //user_timeout = 0;
     set_timeout(0);
     clearScreen();
-   while(check_pressed()==0)
-   {
-       display_home_screen_LCD();
-   }
-   set_count(0);
+    get_trigger_status();
+
+    while(check_pressed() == 0){
+        display_home_screen_LCD();
+        display_trigger(get_trigger_status());
+    }
+
+    set_count(0);
     enter_password();       // Prompt user to enter password
 
     while(1){
         display_menu();         // Display the menu screen. Different options within
-                                // this function will change the screen displayed.
+                                    // this function will change the screen displayed.
     }
 }
 
@@ -116,7 +120,7 @@ void display_menu(){
             go_home();
             break;
 
-        case ENTER_KEY:
+        case BACK_KEY:
             go_home();
             break;
     }
@@ -797,8 +801,8 @@ void arm_error_LCD(){
 }
 
 void arm_success_LCD(){
-    int16_t textColor = ST7735_BLACK;
-    int16_t bgColor = ST7735_GREEN;
+    int16_t textColor = ST7735_RED;
+    int16_t bgColor = ST7735_WHITE;
     ST7735_FillScreen(bgColor);
     int y=5;
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
@@ -806,10 +810,37 @@ void arm_success_LCD(){
 }
 
 void disarm_success_LCD(){
-    int16_t textColor = ST7735_BLACK;
-    int16_t bgColor = ST7735_GREEN;
+    int16_t textColor = ST7735_GREEN;
+    int16_t bgColor = ST7735_WHITE;
     ST7735_FillScreen(bgColor);
     int y=5;
     ST7735_DrawString2(5,y, "System", textColor, bgColor);
     ST7735_DrawString2(3,y+3, "Disarmed", textColor, bgColor);
+}
+
+void trigger_LCD(int trigger){
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_RED;
+    ST7735_FillScreen(bgColor);
+    int y=2;
+    ST7735_DrawString2(3,y, "WARNING!", textColor, bgColor);
+    switch(trigger){
+        case DOOR:
+            ST7735_DrawString2(2,y+=3, "Door Open", textColor, bgColor);
+            break;
+        case WINDOW:
+            ST7735_DrawString2(4,y+=3, "Window", textColor, bgColor);
+            ST7735_DrawString2(6,y+=3, "Open", textColor, bgColor);
+            break;
+        case TEMPERATURE:
+            ST7735_DrawString2(6,y+=3, "Fire", textColor, bgColor);
+            ST7735_DrawString2(2,y+=3, "Detected", textColor, bgColor);
+            break;
+        case PRESENCE:
+            ST7735_DrawString2(2,y+=3, "Presence", textColor, bgColor);
+            ST7735_DrawString2(2,y+=3, "Detected", textColor, bgColor);
+            break;
+    }
+    ST7735_DrawString_bg(2, 12, "Press any key to", textColor, bgColor);
+    ST7735_DrawString_bg(2, 13, "continue.", textColor, bgColor);
 }

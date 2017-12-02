@@ -8,10 +8,14 @@
 #include "RTC.h"
 #include "ST7735.h"
 #include "buzzer.h"
+#include "timers.h"
 
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
 extern volatile int DC_LCD;
+
+int triggerDisplayed = 0;
+
 // Creadit: ADC14 MSP432ware
 void ADC_Init() //credit: ADC14 MSP432ware
 {
@@ -71,7 +75,6 @@ void check_sensors(){
     uint16_t x=0, y=0;
     int16_t textColor = ST7735_WHITE;
     int16_t bgColor = ST7735_BLACK;
-    char key;
 
     do{
         x=0, y=0;
@@ -91,18 +94,11 @@ void check_sensors(){
         ST7735_DrawString(x, y+=1, "Presence", textColor);
         ST7735_DrawString(x+12, y, check_PIR() ? "DETECTED" : "NONE    ", textColor);
 
-        ST7735_DrawString(x, y+=2, "hold any digit to", textColor);
-        ST7735_DrawString(x, y+=1, "return to menu.", textColor);
+//        ST7735_DrawString(x, y+=2, "hold any digit to", textColor);
+//        ST7735_DrawString(x, y+=1, "return to menu.", textColor);
 
-       // key = keypad_getkey();
-       // set_count(0);
-    }while(check_pressed()==0); //if nothing is pressed
+    }while(check_pressed() != BACK_KEY);
     display_menu();
-//    if(key == HOME_KEY)
-//        go_home();
-//
-//    if(key == ENTER_KEY)
-//        display_menu();
 }
 
 /*
@@ -114,6 +110,8 @@ void Init_PIR(){
     MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN7);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, GPIO_PIN7);
     MAP_GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN7);
+
+    set_trigger_displayed(0);
 
 //    P2SEL0 &= ~BIT(7);
 //    P2SEL1 &= ~BIT(7); //conf as GPIO
@@ -188,27 +186,27 @@ void PORT2_IRQHandler(void)
 
     // If armed and not triggered, check for triggers
     //!get_trigger_status() &&
-    if( !get_trigger_status() && get_armed()){
+    if( get_trigger_status() == NONE && get_armed()){
 
         if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
-                //TODO Don: How can we use interrupt to change LED status? on/off
+//                set_trigger_status(DOOR);
 //                flashing_red();
-//                set_trigger_status(1);
 //                log_trigger_time(DOOR);
+//                flashing_red();
+//                tone1();
 
         }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
+//                set_trigger_status(WINDOW);
 //                flashing_red();
-//                set_trigger_status(1);
 //                log_trigger_time(WINDOW);
-
+//                flashing_red();
+//                tone1();
 
         }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
-            set_trigger_status(1);
+            set_trigger_status(PRESENCE);
             log_trigger_time(PRESENCE);
             flashing_red();
             tone1();
-
-
         }
     }
 }
@@ -235,4 +233,33 @@ void init_LED2()
 void flashing_red(){
     P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
     P2->OUT ^= BIT2; // Blue for testing
+}
+
+/*
+ * Display screens for when system is triggered
+ */
+void display_trigger(int type){
+    if(type != NONE){
+        set_trigger_displayed(1);
+        trigger_LCD(type);
+        keypad_getkey();
+        enter_password();       // Prompt user to enter password
+        arm_disarm_alarm();
+        set_trigger_displayed(0);
+        display_trigger_log();
+    }
+}
+
+/*
+ * This function sets the status of the trigger screen being displayed
+ */
+void set_trigger_displayed(int display){
+    triggerDisplayed = display;
+}
+
+/*
+ * This function returns the status of the trigger screen being displayed
+ */
+int get_trigger_displayed(){
+    return triggerDisplayed;
 }

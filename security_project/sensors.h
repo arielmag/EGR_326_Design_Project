@@ -17,5 +17,8 @@ void red();
 void check_sensors();
 void flashing_red();
 void ADC_Init();
+void display_trigger(int type);
+void set_trigger_displayed(int display);
+int get_trigger_displayed();
 
 #endif

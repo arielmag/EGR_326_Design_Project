@@ -3,8 +3,9 @@
 #include <stdint.h>
 #include "keypad.h"
 #include "timers.h"
-
 #include "LCD.h"
+#include "alarm.h"
+#include "sensors.h"
 
 int user_timeout;
 
@@ -77,6 +78,9 @@ char keypad_getkey()
                go_home();
            }
 
+           // Check for trigger if not already in the process of displaying one
+           if(!get_trigger_displayed())
+               display_trigger(get_trigger_status());
        }while(1);
 
 }
@@ -91,44 +95,52 @@ int debounce(int row)
     if (row == 0x0B) select = 2;
     if (row == 0x07) select = 3;
 
-    State = (State << 1) | (P4IN & BIT(select))>>select | 0x0000;    // Read switch
+    State = (State << 1) | (P4IN & BIT(select))>>select | 0xf000;    // Read switch
     return (State == 0xffff); // Return true if button released for 8 consecutive calls
 }
 
-int check_pressed() // no debounce
+char check_pressed() // no debounce
 {
 
-            // assumes port 4 bits 0-3 are connected to rows
-        int row, col; // bits 4,5,6 are connected to columns
+        // assumes port 4 bits 0-3 are connected to rows
+    int row, col; // bits 4,5,6 are connected to columns
 
-        const char column_select[] = {0x10, 0x20, 0x40}; // one column is active
-        // Activates one column at a time, read the input to see which column
+    const char column_select[] = {0x10, 0x20, 0x40}; // one column is active
+    // Activates one column at a time, read the input to see which column
 
-        for (col = 0; col < 3; col++) {
+    for (col = 0; col < 3; col++) {
         P4->DIR &= ~0xF0; // disable all columns, aka set them as input
         P4->DIR |= column_select[col]; // enable one column at a time
         P4->OUT &= ~column_select[col]; // drive the active output column to low
         __delay_cycles(10); // wait for signal to settle
         row = P4->IN & 0x0F; // read all rows
-        P4->OUT |= column_select[col]; // drive the active column high
-        if (row != 0x0F) break; // if one of the input is low,
-        // some key is pressed.
+
+        if(row != 0x0F){ // if one input is pressed, go into debounce sequence
+            while(!debounce(row)); // loop until read 4 new consecutive inputs (0)
+            P4->OUT |= column_select[col]; // drive active column high
+            break;
         }
+        P4->OUT |= column_select[col]; // drve the active column high
+    }
 
-        P4->OUT |= 0xF0; // drive all columns high before disable
-        P4->DIR &= ~0xF0; // disable all columns
+    P4->OUT |= 0xF0; // drive all columns high before disable
+    P4->DIR &= ~0xF0; // disable all columns
 
-        if (row == 0x0E) return  1; // key in row 0  +48 for converting int to ACII char
-        if (row == 0x0D) return 1; // key in row 1
-        if (row == 0x0B) return 1; // key in row 2
-        if (row == 0x07)
-        {
-        if(col==0)                return 1;
+    if (row == 0x0E) return  (48+col + 1); // key in row 0  +48 for converting int to ACII char
+    if (row == 0x0D) return (48+3 + col + 1); // key in row 1
+    if (row == 0x0B) return (48+6 + col + 1); // key in row 2
+    if (row == 0x07)
+    {
+        if(col==0)                return '*';
 
-        if(col==1)                return 1;
+        if(col==1)                return '0';
 
-        if(col==2)                return 1;
-        }
+        if(col==2)                return '#';
+    }
 
-        return 0; // return null
+    // Check for trigger if not already in the process of displaying one
+    if(!get_trigger_displayed())
+        display_trigger(get_trigger_status());
+
+    return 0; // return 0 if nothing pressed
 }

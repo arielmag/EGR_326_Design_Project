@@ -36,5 +36,6 @@ void display_log();
 void clear_trigger_log();
 int get_trigger_status();
 void set_trigger_status();
+void trigger_LCD();
 
 #endif

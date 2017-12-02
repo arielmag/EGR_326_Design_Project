@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "keypad.h"
+#include "RTC.h"
+#include "alarm.h"
 
 //volatile int user_timeout = 0;
 extern volatile int count = 0;
@@ -115,6 +117,11 @@ void T32_INT1_IRQHandler(void)
         //user_timeout = 1;//when 60s is counted, telling main by setting user_timeout flag to 1.
         count=0;
     }
+
+//    if(RTC_read_temperature() <= 110){
+//        trigger_LCD(TEMPERATURE);
+//        cas_sysDelay(2);
+//    }
     return;
 
 }
