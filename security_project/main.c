@@ -43,6 +43,8 @@ int main(void)
     Init_alarm();               // Initialize alarm
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
     init_WDT();                 // Initialize watchdog timer, 128KHz
+    Init_solenoid();            // Initialize solenoid P5.1
+
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 
@@ -57,6 +59,7 @@ int main(void)
 
     // When system is set up
     while(1){
+
 
         go_home();
     }

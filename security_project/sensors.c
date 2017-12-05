@@ -55,7 +55,7 @@ void ADC14_IRQHandler(void)
          curADCResult = MAP_ADC14_getResult(ADC_MEM0);
          normalizedADCRes = (curADCResult * 3.3 ) / 16384; //assume 3.3 V ref. 14 bits
         //        MAP_ADC14_toggleConversionTrigger(); //start the next ADC conversion
-         DC_LCD = 1000 - curADCResult / 10;
+         DC_LCD = 1000 - curADCResult / 10; //try use absolute value
          TIMER_A2 ->CCR[1] = DC_LCD;//duty cycle
     }
 

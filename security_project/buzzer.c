@@ -106,3 +106,18 @@ void tone1()
         cas_sysDelay(1);
 }
 
+void Init_solenoid() //TODO: implement an interrupt for it
+{
+    P5->DIR |= BIT1; // P5.1 as output
+    P5->OUT &=~BIT1;
+
+}
+
+void buzz_solenoid()
+{
+    while(1)
+    {
+    P5->OUT ^= BIT1;
+    SysTick_delay(30);
+    }
+}
