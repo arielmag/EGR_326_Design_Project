@@ -49,17 +49,16 @@ int main(void)
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 
     // Hold down P1.1 on startup to reset system
-    if(!(P1IN&BIT1)){
-        reset_system();
-    }
-
-    if(check_reset()){          // Check if system is reset
-        setup_system();         // Let the user setup time and password
-    }
+//    if(!(P1IN&BIT1)){
+//        reset_system();
+//    }
+//
+//    if(check_reset()){          // Check if system is reset
+//        setup_system();         // Let the user setup time and password
+//    }
 
     // When system is set up
     while(1){
-
 
         go_home();
     }

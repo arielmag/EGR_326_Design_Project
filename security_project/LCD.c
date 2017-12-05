@@ -114,9 +114,15 @@ void display_menu(){
         //7  to play alarm for debug
         case '7':
 
-          //  tone1();
+            tone1();
+
+            break;
+        //8  to play buzzer for debug
+        case '8':
+
             buzz_solenoid(); // May need to change the while loop to interrupt instead; for testing
             break;
+
         // '*' to go back to home
         case HOME_KEY:
             go_home();

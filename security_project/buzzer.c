@@ -108,16 +108,16 @@ void tone1()
 
 void Init_solenoid() //TODO: implement an interrupt for it
 {
-    P5->DIR |= BIT1; // P5.1 as output
-    P5->OUT &=~BIT1;
+    P5->DIR |= BIT0; // P5.1 as output
+    P5->OUT &=~BIT0;
 
 }
 
 void buzz_solenoid()
 {
-    while(1)
+    while(!check_pressed())
     {
-    P5->OUT ^= BIT1;
+    P5->OUT ^= BIT0;
     SysTick_delay(30);
     }
 }
