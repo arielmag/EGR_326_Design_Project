@@ -17,6 +17,7 @@
 #include "ST7735.h"
 #include "timers.h"
 #include "buzzer.h"
+#include "LED.h"
 
 //extern volatile int user_timeout;
 //extern int count;
@@ -43,7 +44,9 @@ int main(void)
     Init_alarm();               // Initialize alarm
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
     init_WDT();                 // Initialize watchdog timer, 128KHz
-    Init_solenoid();            // Initialize solenoid P5.1
+    Init_solenoid();            // Initialize solenoid P5.0
+    Init_LED();                 // Initialize GPIO 6.6, 6.7 as LED outputs
+
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
@@ -59,8 +62,8 @@ int main(void)
 
     // When system is set up
     while(1){
-
-        go_home();
+        toggle_LED();
+        //go_home();
     }
 }
 
