@@ -25,6 +25,7 @@
 #include "keypad.h"
 #include "alarm.h"
 #include "buzzer.h"
+#include "LED.h"
 
 /*
 *       timeHigh = 1/(2 * toneFrequency) = period / 2
@@ -71,6 +72,17 @@ void pwm_buzzer(int period)
             |TIMER_A_CTL_CLR;
 
 }
+
+void pwm_buzzer_high()
+ {
+     pwm_buzzer(high);
+
+ }
+
+void pwm_buzzer_low()
+ {
+    pwm_buzzer(low);
+ }
 
 void tone1()
 {

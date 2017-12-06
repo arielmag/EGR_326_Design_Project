@@ -9,6 +9,7 @@
 #include "ST7735.h"
 #include "buzzer.h"
 #include "timers.h"
+#include "LED.h"
 
 volatile uint16_t curADCResult;
 volatile float normalizedADCRes;
@@ -213,13 +214,15 @@ void PORT2_IRQHandler(void)
 
 void green()
 {
-P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
-P2->OUT ^= BIT1;
+//P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
+//P2->OUT ^= BIT1;
+    on_green();
 }
 void red()
 {
-P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
-P2->OUT ^= BIT0;
+//P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
+//P2->OUT ^= BIT0;
+    on_red();
 }
 void init_LED2()
 {

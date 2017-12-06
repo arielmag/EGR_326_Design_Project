@@ -18,6 +18,7 @@
 #include "timers.h"
 #include "buzzer.h"
 #include "bluetooth.h"
+#include "LED.h"
 
 //extern volatile int user_timeout;
 //extern int count;
@@ -46,6 +47,7 @@ int main(void)
     init_WDT();                 // Initialize watchdog timer, 128KHz
     Init_solenoid();            // Initialize solenoid P5.1
     Init_bluetooth();
+    Init_LED();                 // Initialize LED 6.6 red, 6.7 green
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization

@@ -5,11 +5,14 @@
 #include "keypad.h"
 #include "RTC.h"
 #include "alarm.h"
+#include "LED.h"
+#include "sensors.h"
+#include "buzzer.h"
 
 //volatile int user_timeout = 0;
 extern volatile int count = 0;
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;
-
+int static buzzer_flag = 0;
 void set_count(int value){
     count = value;
 }
@@ -106,7 +109,7 @@ void init_WDT()
 
 }
 
-void T32_INT1_IRQHandler(void)
+void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
 {
     MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
     MAP_Timer32_setCount(TIMER32_BASE,48000000);
@@ -122,6 +125,25 @@ void T32_INT1_IRQHandler(void)
 //        trigger_LCD(TEMPERATURE);
 //        cas_sysDelay(2);
 //    }
+
+        if( get_trigger_status() != NONE && get_armed()) //every second, check if the system is triggered and armed
+            {
+
+            toggle_red(); //if it is triggered, and the system is armed. Toggle red LED
+
+             if (buzzer_flag)
+            {
+            pwm_buzzer_high();
+             buzzer_flag =0;
+             }
+            if(!buzzer_flag)
+            {
+                pwm_buzzer_low();
+                buzzer_flag =1;}
+             }
+
+
+
     return;
 
 }
