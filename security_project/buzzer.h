@@ -15,4 +15,5 @@ void Init_solenoid();
 void buzz_solenoid();
 void pwm_buzzer_high();
 void pwm_buzzer_low();
+void Init_pushbutton();
 #endif /* BUZZER_H_ */
