@@ -193,22 +193,17 @@ void PORT2_IRQHandler(void)
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
     // If armed and not triggered, check for triggers
-    //!get_trigger_status() &&
     if( get_trigger_status() == NONE && get_armed()){
 
         if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
-//                set_trigger_status(DOOR);
-//                flashing_red();
-//                log_trigger_time(DOOR);
-//                flashing_red();
-//                tone1();
+                set_trigger_status(DOOR);
+                log_trigger_time(DOOR);
+                flashing_red();
 
         }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
-//                set_trigger_status(WINDOW);
-//                flashing_red();
-//                log_trigger_time(WINDOW);
-//                flashing_red();
-//                tone1();
+                set_trigger_status(WINDOW);
+                log_trigger_time(WINDOW);
+                flashing_red();
 
         }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
             set_trigger_status(PRESENCE);

@@ -51,7 +51,6 @@ int main(void)
 
     Init_pushbutton();          // Initialize pushbutton P1.6
 
-    // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 
     // Hold down P1.1 on startup to reset system
