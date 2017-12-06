@@ -1224,7 +1224,8 @@ uint32_t ST7735_DrawString2(uint16_t x, uint16_t y, char *pt, int16_t textColor,
   uint32_t count = 0;
   if(y>15) return 0;
   while(*pt){
-    ST7735_DrawCharS2(x*6, y*10, *pt, textColor, 2);
+    ST7735_DrawCharS(x*6, y*10, *pt, textColor, bgColor, 2);
+    //ST7735_DrawCharS2(x*6, y*10, *pt, textColor, 2);
     pt++;
     x = x+2;
     if(x>20) return count;  // number of characters printed

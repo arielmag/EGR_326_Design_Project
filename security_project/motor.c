@@ -34,28 +34,53 @@ void set_lock(int status){
  */
 int lock_unlock_door(){
     if(get_lock()){ // If door is locked, unlock
-        clearScreen();
-        ST7735_DrawString(8, 8, "Unlocking",ST7735_Color565(180, 240, 250));
+        door_unlocked_LCD();
         full_step_reverse(LOCK_SPEED);
         set_lock(!get_lock()); // Set flag to unlocked
         return 1;
 
     }else{ // Otherwise, turn the other way to lock
         if(get_door_status() == CLOSED){ // Only lock if the door is closed
-            clearScreen();
-            ST7735_DrawString(8, 8, "Locking",ST7735_Color565(180, 240, 250));
+            door_locked_LCD();
             full_step(LOCK_SPEED);
             set_lock(!get_lock()); // Set flag to locked
             return 1;
         }else{
-            clearScreen();
-            ST7735_DrawString(0, 7, "Door is open. ",ST7735_Color565(180, 240, 250));
-            ST7735_DrawString(0, 8, "Close door and try.",ST7735_Color565(180, 240, 250));
+            lock_error_LCD();
             cas_sysDelay(2);
             return 0;
                        // delay, and then go back to menu
         }
     }
+}
+
+void door_locked_LCD(){
+    int16_t textColor = ST7735_BLUE;
+    int16_t bgColor = ST7735_WHITE;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString2(6,y, "Door", textColor, bgColor);
+    ST7735_DrawString2(5,y+3, "Locked", textColor, bgColor);
+}
+
+void door_unlocked_LCD(){
+    int16_t textColor = ST7735_BLUE;
+    int16_t bgColor = ST7735_WHITE;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString2(6,y, "Door", textColor, bgColor);
+    ST7735_DrawString2(3,y+3, "Unlocked", textColor, bgColor);
+}
+
+
+void lock_error_LCD(){
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_RED;
+    ST7735_FillScreen(bgColor);
+    int y=5;
+    ST7735_DrawString_bg(2,y, "Cannot lock door.", textColor, bgColor);
+    ST7735_DrawString_bg(4,y+=2, "Close door", textColor, bgColor);
+    ST7735_DrawString_bg(3,y+=1, "then try again.", textColor, bgColor);
 }
 
 /*

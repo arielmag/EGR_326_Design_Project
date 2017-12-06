@@ -13,6 +13,7 @@
 #include "buzzer.h"
 #include "keypad.h"
 #include "sensors.h"
+#include "bluetooth.h"
 
 extern int month_flag;
 extern int day_flag;
@@ -34,9 +35,12 @@ void Init_LCD(){
  */
 void go_home(){
 
+    int16_t bgColor = ST7735_Color565(82, 121, 214);
+
     //user_timeout = 0;
     set_timeout(0);
-    clearScreen();
+    ST7735_FillScreen(bgColor);
+    //clearScreen();
     get_trigger_status();
 
     while(check_pressed() == 0){
@@ -122,10 +126,10 @@ void display_menu(){
         //8  to play buzzer for debug
         case '8':
             while(!check_pressed())
-            {
-                buzz_solenoid();
-            }
-             // May need to change the while loop to interrupt instead; for testing
+             {
+                 buzz_solenoid();
+             }
+
             break;
 
         // '*' to go back to home
@@ -257,37 +261,56 @@ void printDateTimeStored_LCD(){
  */
 void display_home_screen_LCD()
 {
+
+    int16_t bgColor = ST7735_Color565(82, 121, 214);
+    int16_t textColor = ST7735_WHITE;
+
+    int y=0;
+    char str_date[20];
+    char str_time[20];
+    char str_temperature[40];
+
+    int i;
+    for(i=0;i<20;i++){
+        str_date[i] = 0;
+        str_time[i] = 0;
+        str_temperature[i] = 0;
+    }
+
       // clearScreen();
        RTC_read();
-       char string1[]={'T', 'E', 'M','P'}; //Eventually display temperature information
-       int i;
-       int x=5;
-       int y=20;
-       for(i=0; i<4; i++)
-       {
-           ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
+//       char string1[]={'T', 'E', 'M','P'}; //Eventually display temperature information
+//       int i;
+//       int x=5;
+//       int y=20;
+//       for(i=0; i<4; i++)
+//       {
+//           ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
+//       }
+       ST7735_DrawString2(0, y, "Security", textColor, bgColor);
+       ST7735_DrawString2(0, y+=2, "System", textColor, bgColor);
+
+       printDayLCD(RTC_registers[3]); //get day format Sun/Mon..
+       printMonthLCD(RTC_registers[5]); //get month format Jan
+
+
+      // ST7735_FillScreen(0);
+       sprintf(str_date, "%s. %s %x, 20%02x", return_char_day, return_char_month, RTC_registers[4] , RTC_registers[6]); //format string: day-month-year
+       //ST7735_DrawString(0, 3, "Date: ", ST7735_GREEN);
+       //ST7735_DrawString(0, 8, str_date, ST7735_GREEN);
+       ST7735_DrawString_bg(2, y+=3, str_date, textColor, bgColor);
+
+       sprintf(str_time,"%02x:%02x:%02x", RTC_registers[2], RTC_registers[1], RTC_registers[0]);
+       ST7735_DrawString_bg(2, y+=2, str_time, textColor, bgColor);
+
+       sprintf(str_temperature, "Temp: %.2f F", RTC_read_temperature());
+       ST7735_DrawString_bg(2, y+=2, str_temperature, textColor, bgColor);
+
+       if(get_armed()){
+           ST7735_DrawString2(0, y+=3, "   ARMED   ", ST7735_BLACK, ST7735_RED);
+       }else{
+           ST7735_DrawString2(0, y+=3, "  DISARMED  ", ST7735_BLACK, ST7735_GREEN);
        }
-       print_temperature();
-  
-       y+=40;
-       char string2[]={'D', 'A', 'T','E'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
-       for(i=0; i<4; i++){
-           ST7735_DrawChar(x+(i*20), y, string2[i], ST7735_Color565(180, 240, 250), 0, 2);
-       }
-
-       printDateLCD();
-
-
-       y+=40;
-       char string3[]={'T','I','M','E'};    //Eventually display date information here
-       for(i=0; i<4; i++)
-       {
-           ST7735_DrawChar(x+(i*20), y, string3[i], ST7735_Color565(180, 240, 250), 0, 2);
-       }
-       printTimeLCD();
-
-       // TODO: Add the following lines into menu display loop
-
 
 }
 
@@ -295,8 +318,14 @@ void print_temperature()
 {
     char str_temperature[40];
    // ST7735_FillScreen(0);
-    sprintf(str_temperature, "Temperature: %.2f F", RTC_read_temperature());
-    ST7735_DrawString(0, 4, str_temperature, ST7735_GREEN);
+    int x=0, y=5;
+
+    sprintf(str_temperature, "%.2f F", RTC_read_temperature());
+
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLUE;
+
+    ST7735_DrawString2(x, y, str_temperature, textColor, bgColor);
 }
 
 void init_pwm_lcd() //using timerA1
@@ -705,51 +734,24 @@ void display_menu_LCD()
 {
     clearScreen();
 
-          char string1[]={'1','.','L', 'O', 'C','K','/','U','N','C','L','K'}; //Eventually display temperature information
-          int i;
-          int x=5;
-          int y=5;
-          for(i=0; i<12; i++)
-          {
-              ST7735_DrawChar(x+(i*8), y, string1[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
+    uint16_t x=0, y=0;
+    int16_t textColor = ST7735_WHITE;
+    int16_t bgColor = ST7735_BLACK;
 
-          y+=20;
-          ST7735_DrawString(2, 2, get_armed()? "2. DISARM ALARM" : "2. ARM ALARM",ST7735_Color565(180, 240, 250));
-          /*
-          char string2[]={'2','.','A','R','M','/','D','I','S','A','R','M'};    //Eventually display date information here
-          for(i=0; i<12; i++)
-          {
-              ST7735_DrawChar(x+(i*8), y, string2[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
-          */
+    ST7735_DrawString2(x, y, "Main", textColor, bgColor);
+    ST7735_DrawString2(x, y+=2, "Menu", textColor, bgColor);
 
-          y+=20;
-          char string3[]={'3','.','C', 'H', 'E','C','K',' ','S','E','N','S','O','R'};//Eventually display time information hour:min:sec, rtc[2] rtc[1] rtc[0]
-          for(i=0; i<14; i++){
-              ST7735_DrawChar(x+(i*8), y, string3[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
+    ST7735_DrawString(x, y+=3, get_lock()? "1. Unlock Door" : "1. Lock Door", textColor);
 
-           y+=20;
-          char string5[]={'4','.','L','O','G',' ','H','I','S','T','O','R','Y'};    //Eventually display date information here
-          for(i=0; i<13; i++)
-          {
-              ST7735_DrawChar(x+(i*8), y, string5[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
+    ST7735_DrawString(x, y+=1,  get_armed()? "2. Disarm Alarm" : "2. Arm Alarm", textColor);
 
-          y+=20;
-          char string6[]={'5','.','C','H','A','N','G','E',' ','T' ,'I','M','E'};    //Eventually display date information here
-          for(i=0; i<13; i++)
-          {
-              ST7735_DrawChar(x+(i*8), y, string6[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
+    ST7735_DrawString(x, y+=1, "3. Check Sensors", textColor);
 
-          y+=20;
-          char string7[]={'6','.','C','H','A','N','G','E',' ','C','O','D','E'};    //Eventually display date information here
-          for(i=0; i<13; i++)
-          {
-              ST7735_DrawChar(x+(i*8), y, string7[i], ST7735_Color565(180, 240, 250), 0, 1);
-          }
+    ST7735_DrawString(x, y+=1, "4. View Logs", textColor);
+
+    ST7735_DrawString(x, y+=1, "5. Change Time", textColor);
+
+    ST7735_DrawString(x, y+=1, "5. Change Password", textColor);
 }
 void clearScreen(){
     ST7735_FillScreen(0x0000);            // set screen to black

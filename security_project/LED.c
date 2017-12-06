@@ -22,13 +22,11 @@ void Init_LED() //6.6 red, 6.7 green
     P6->DIR |= BIT7;
     P6->OUT &= ~BIT6; //GPIO 6.6, 6.7 initially low output
     P6->OUT &= ~BIT7;
-
 }
 
 void toggle_red() //P6.6
 {
     P6->OUT ^= BIT6;
-
 }
 
 void on_green()

@@ -6,6 +6,7 @@
 #include "LCD.h"
 #include "alarm.h"
 #include "sensors.h"
+#include "bluetooth.h"
 
 int user_timeout;
 
@@ -73,16 +74,19 @@ char keypad_getkey()
                if(col==2)                return '#';
            }
 
-           if(user_timeout == 1){ // for idle state detection
-               // idle state, go back to home screen
-               go_home();
-           }
+
 
            // Check for trigger if not already in the process of displaying one
-           if(!get_trigger_displayed())
+           if(!get_trigger_displayed()){
+               if(user_timeout == 1){ // for idle state detection
+                   // idle state, go back to home screen
+                   go_home();
+               }
                display_trigger(get_trigger_status());
-           if(check_bluetooth())
-               go_home();
+               if(check_bluetooth())
+                   go_home();
+           }
+
        }while(1);
 
 }
@@ -141,11 +145,16 @@ char check_pressed() // no debounce
     }
 
     // Check for trigger if not already in the process of displaying one
-    if(!get_trigger_displayed())
+    if(!get_trigger_displayed()){
+        if(user_timeout == 1){ // for idle state detection
+            // idle state, go back to home screen
+            go_home();
+        }
         display_trigger(get_trigger_status());
+        if(check_bluetooth())
+            go_home();
 
-    if(check_bluetooth())
-        go_home();
+    }
 
     return 0; // return 0 if nothing pressed
 }

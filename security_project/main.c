@@ -47,7 +47,7 @@ int main(void)
     init_WDT();                 // Initialize watchdog timer, 128KHz
     Init_solenoid();            // Initialize solenoid P5.1
     Init_bluetooth();
-    Init_LED();                 // Initialize LED P6.6 red, P6.7 green
+    Init_LED();                 // Initialize LED 6.6 red, 6.7 green
     Init_pushbutton();          // Initialize pushbutton P1.6
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
