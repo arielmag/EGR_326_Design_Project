@@ -213,13 +213,15 @@ void PORT2_IRQHandler(void)
 
 void green()
 {
-P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
-P2->OUT ^= BIT1;
+//P2->OUT &= ~(BIT0|BIT1|BIT2);
+//P2->OUT ^= BIT1;// board LED green
+    on_green();
 }
 void red()
 {
-P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
-P2->OUT ^= BIT0;
+//P2->OUT &= ~(BIT0|BIT1|BIT2);
+//P2->OUT ^= BIT0;//on board LED red
+    on_red();
 }
 void init_LED2()
 {

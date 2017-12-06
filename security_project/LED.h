@@ -10,6 +10,9 @@
 
 void Init_LED();
 
-void toggle_LED();
+void toggle_red();
+void on_green();
+void pwm_buzzer_high();
+void pwm_buzzer_low();
 
 #endif /* LED_H_ */

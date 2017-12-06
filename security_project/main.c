@@ -62,8 +62,8 @@ int main(void)
 
     // When system is set up
     while(1){
-        toggle_LED();
-        //go_home();
+
+        go_home();
     }
 }
 

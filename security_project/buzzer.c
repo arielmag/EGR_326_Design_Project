@@ -72,6 +72,16 @@ void pwm_buzzer(int period)
 
 }
 
+void pwm_buzzer_high()
+{
+    pwm_buzzer(high);
+
+}
+
+void pwm_buzzer_low()
+{
+    pwm_buzzer(low);
+}
 void tone1()
 {
         pwm_buzzer(tone[5]);
