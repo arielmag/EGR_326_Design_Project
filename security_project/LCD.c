@@ -121,8 +121,11 @@ void display_menu(){
             break;
         //8  to play buzzer for debug
         case '8':
-
-            buzz_solenoid(); // May need to change the while loop to interrupt instead; for testing
+            while(!check_pressed())
+            {
+                buzz_solenoid();
+            }
+             // May need to change the while loop to interrupt instead; for testing
             break;
 
         // '*' to go back to home

@@ -127,9 +127,44 @@ void Init_solenoid() //TODO: implement an interrupt for it
 
 void buzz_solenoid()
 {
-    while(!check_pressed())
-    {
+
     P5->OUT ^= BIT0;
     SysTick_delay(30);
+    P5->OUT ^= BIT0;
+    SysTick_delay(30);
+    P5->OUT ^= BIT0;
+    SysTick_delay(30);
+
+}
+
+
+void Init_pushbutton() //initialize push button for door bell - solenoid
+{
+/* Configuring P1.6 as output and P1.6 (switch) as input */
+  MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN6);
+
+  /* Configuring P1.1 as an input and enabling interrupts */
+  MAP_GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN6);
+  MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN6);
+  MAP_GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN6);
+  MAP_Interrupt_enableInterrupt(INT_PORT1);
+
+  /* Enabling MASTER interrupts */
+  MAP_Interrupt_enableMaster();
+}
+
+void PORT1_IRQHandler() //pushbutton interrupt
+{
+    uint32_t status;
+
+    status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
+    MAP_GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
+
+    /* Toggling the output on the LED */
+    if(status & GPIO_PIN6)
+    {
+        buzz_solenoid();
+
     }
+
 }

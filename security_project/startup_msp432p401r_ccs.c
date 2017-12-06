@@ -61,7 +61,7 @@ extern unsigned long __STACK_END;
 extern void T32_INT1_IRQHandler(void); // for detecting user input timeout of 60s
 extern void ADC14_IRQHandler(void);
 extern void EUSCIA2_IRQHandler(void);
-
+extern void PORT1_IRQHandler(void);
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to  */
 /* ensure that it ends up at physical address 0x0000.0000 or at the start of          */
@@ -122,7 +122,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* DMA_INT2 ISR              */
     defaultISR,                             /* DMA_INT1 ISR              */
     defaultISR,                             /* DMA_INT0 ISR              */
-    defaultISR,                             /* PORT1 ISR                 */
+    PORT1_IRQHandler,                             /* PORT1 ISR                 */
     PORT2_IRQHandler,                       /* PORT2 ISR                 */
     defaultISR,                             /* PORT3 ISR                 */
     defaultISR,                             /* PORT4 ISR                 */
