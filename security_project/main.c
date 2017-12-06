@@ -42,12 +42,13 @@ int main(void)
     init_user_input_timer32();  // Initialize WDT timer for idle state
     init_LED2();
     SysTick_Init();             // Initialize the SysTick timer
+    Init_LED();                 // Initialize LED 6.6 red, 6.7 green
     Init_alarm();               // Initialize alarm
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
     init_WDT();                 // Initialize watchdog timer, 128KHz
     Init_solenoid();            // Initialize solenoid P5.1
     Init_bluetooth();
-    Init_LED();                 // Initialize LED 6.6 red, 6.7 green
+
     Init_pushbutton();          // Initialize pushbutton P1.6
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only

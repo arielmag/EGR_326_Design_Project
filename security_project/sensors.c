@@ -76,7 +76,7 @@ void check_sensors(){
     uint16_t x=0, y=0;
     int16_t textColor = ST7735_WHITE;
     int16_t bgColor = ST7735_BLACK;
-
+    char temp;
     do{
         x=0, y=0;
         ST7735_DrawString2(x, y, "Sensor", textColor, bgColor);
@@ -97,9 +97,16 @@ void check_sensors(){
 
 //        ST7735_DrawString(x, y+=2, "hold any digit to", textColor);
 //        ST7735_DrawString(x, y+=1, "return to menu.", textColor);
-
-    }while(check_pressed() != BACK_KEY);
-    display_menu();
+         temp = check_pressed();
+    }while( temp != BACK_KEY && temp !=HOME_KEY);
+    if(temp == BACK_KEY)
+    {
+        display_menu();
+    }
+    if(temp == HOME_KEY)
+    {
+        go_home();
+    }
 }
 
 /*
@@ -207,7 +214,7 @@ void PORT2_IRQHandler(void)
             set_trigger_status(PRESENCE);
             log_trigger_time(PRESENCE);
             flashing_red();
-            tone1();
+
         }
     }
 }
@@ -216,12 +223,14 @@ void green()
 {
 //P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
 //P2->OUT ^= BIT1;
+    P6->OUT &=~BIT6;
     on_green();
 }
 void red()
 {
 //P2->OUT &= ~(BIT0|BIT1|BIT2); //turn off the bits for LED control
 //P2->OUT ^= BIT0;
+    P6->OUT &=~BIT7;
     on_red();
 }
 void init_LED2()

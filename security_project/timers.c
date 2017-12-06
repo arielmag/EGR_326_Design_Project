@@ -131,16 +131,18 @@ void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
 
             toggle_red(); //if it is triggered, and the system is armed. Toggle red LED
 
-             if (buzzer_flag)
-            {
-            pwm_buzzer_high();
-             buzzer_flag =0;
-             }
-            if(!buzzer_flag)
-            {
-                pwm_buzzer_low();
-                buzzer_flag =1;}
-             }
+                 if (buzzer_flag)
+                {
+                pwm_buzzer_high();
+                 buzzer_flag =0;
+                 }
+                 else
+                {
+                    pwm_buzzer_low();
+                    buzzer_flag =1;
+                }
+
+            }
 
 
 

@@ -751,7 +751,7 @@ void display_menu_LCD()
 
     ST7735_DrawString(x, y+=1, "5. Change Time", textColor);
 
-    ST7735_DrawString(x, y+=1, "5. Change Password", textColor);
+    ST7735_DrawString(x, y+=1, "6. Change Password", textColor);
 }
 void clearScreen(){
     ST7735_FillScreen(0x0000);            // set screen to black
