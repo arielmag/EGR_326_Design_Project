@@ -81,6 +81,8 @@ char keypad_getkey()
            // Check for trigger if not already in the process of displaying one
            if(!get_trigger_displayed())
                display_trigger(get_trigger_status());
+           if(check_bluetooth())
+               go_home();
        }while(1);
 
 }
@@ -141,6 +143,9 @@ char check_pressed() // no debounce
     // Check for trigger if not already in the process of displaying one
     if(!get_trigger_displayed())
         display_trigger(get_trigger_status());
+
+    if(check_bluetooth())
+        go_home();
 
     return 0; // return 0 if nothing pressed
 }

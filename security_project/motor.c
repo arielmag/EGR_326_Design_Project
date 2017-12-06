@@ -29,13 +29,16 @@ void set_lock(int status){
 /*
  * Lock or unlock the door by turning the motor and setting the lock flag. If the door is
  * open, it will not lock and a warning message will display.
+ *
+ * @return 1 door locked/unlocked successfully, 0 door cannot be locked
  */
-void lock_unlock_door(){
+int lock_unlock_door(){
     if(get_lock()){ // If door is locked, unlock
         clearScreen();
         ST7735_DrawString(8, 8, "Unlocking",ST7735_Color565(180, 240, 250));
         full_step_reverse(LOCK_SPEED);
         set_lock(!get_lock()); // Set flag to unlocked
+        return 1;
 
     }else{ // Otherwise, turn the other way to lock
         if(get_door_status() == CLOSED){ // Only lock if the door is closed
@@ -43,11 +46,13 @@ void lock_unlock_door(){
             ST7735_DrawString(8, 8, "Locking",ST7735_Color565(180, 240, 250));
             full_step(LOCK_SPEED);
             set_lock(!get_lock()); // Set flag to locked
+            return 1;
         }else{
             clearScreen();
             ST7735_DrawString(0, 7, "Door is open. ",ST7735_Color565(180, 240, 250));
             ST7735_DrawString(0, 8, "Close door and try.",ST7735_Color565(180, 240, 250));
             cas_sysDelay(2);
+            return 0;
                        // delay, and then go back to menu
         }
     }

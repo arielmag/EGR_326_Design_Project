@@ -36,6 +36,7 @@
  * --/COPYRIGHT--*/
 #include <stdint.h>
 #include "sensors.h"
+#include "bluetooth.h"
 
 /* Forward declaration of the default fault handlers. */
 static void resetISR(void);
@@ -59,6 +60,7 @@ extern unsigned long __STACK_END;
 /* External declarations for the interrupt handlers used by the application. */
 extern void T32_INT1_IRQHandler(void); // for detecting user input timeout of 60s
 extern void ADC14_IRQHandler(void);
+extern void EUSCIA2_IRQHandler(void);
 
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to  */
@@ -103,7 +105,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* TA3_N ISR                 */
     defaultISR,                             /* EUSCIA0 ISR               */
     defaultISR,                             /* EUSCIA1 ISR               */
-    defaultISR,                             /* EUSCIA2 ISR               */
+    EUSCIA2_IRQHandler,                             /* EUSCIA2 ISR               */
     defaultISR,                             /* EUSCIA3 ISR               */
     defaultISR,                             /* EUSCIB0 ISR               */
     defaultISR,                             /* EUSCIB1 ISR               */

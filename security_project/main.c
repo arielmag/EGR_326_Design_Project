@@ -17,6 +17,7 @@
 #include "ST7735.h"
 #include "timers.h"
 #include "buzzer.h"
+#include "bluetooth.h"
 
 //extern volatile int user_timeout;
 //extern int count;
@@ -44,18 +45,19 @@ int main(void)
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
     init_WDT();                 // Initialize watchdog timer, 128KHz
     Init_solenoid();            // Initialize solenoid P5.1
+    Init_bluetooth();
 
     // Note: Hall effect sensor detection is commented out for testing, test with PIR only
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 
     // Hold down P1.1 on startup to reset system
-//    if(!(P1IN&BIT1)){
-//        reset_system();
-//    }
-//
-//    if(check_reset()){          // Check if system is reset
-//        setup_system();         // Let the user setup time and password
-//    }
+    if(!(P1IN&BIT1)){
+        reset_system();
+    }
+
+    if(check_reset()){          // Check if system is reset
+        setup_system();         // Let the user setup time and password
+    }
 
     // When system is set up
     while(1){

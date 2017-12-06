@@ -42,6 +42,8 @@ void go_home(){
     while(check_pressed() == 0){
         display_home_screen_LCD();
         display_trigger(get_trigger_status());
+        if(check_bluetooth())
+            go_home();
     }
 
     set_count(0);

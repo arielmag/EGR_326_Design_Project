@@ -70,7 +70,7 @@ void Port4_Initb() // Initiate port pin 1.0 as input with internal pull up resis
 void RTC_write() //EGR 326 lecture slide
 {
     // Setting to Sunday, November 11, 2011 at 11:11:11 so I don't have to enter it every time for testing
-    //unsigned char date[15]={0x11, 0x11, 0x11, 0x01, 0x11, 0x11, 0x11, 0}; 
+    //unsigned char date[15]={0x11, 0x11, 0x11, 0x01, 0x11, 0x11, 0x11, 0x00}; 
     /* Set Master in transmit mode */
     MAP_I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
     // Wait for bus release, ready to write
