@@ -58,13 +58,32 @@ void Init_alarm(){
     P1REN |= BIT1; // 3) enable pull resistors on P1.0
     P1OUT |= BIT1; // P1.0 are pull-up
 
-    set_armed(0); // Disarm system and no triggers
-    set_trigger_status(NONE);
-    green();
-
     get_saved_password();
     get_saved_arm_disarm_log();
     get_saved_trigger_log();
+
+    sounder_off();
+
+    int events = arm_disarm_log[0]; // Number of arm/disarm events
+
+    // If there are no arm/disarm events
+    if(events == 0){
+        set_armed(0); // Disarm system and no triggers
+        set_trigger_status(NONE);
+        green();
+    }else{
+        events -= 1;
+        // Check type of last arm/disarm event
+        if(arm_disarm_log[1+(events*8)] == 0){
+            set_armed(0); // Disarm system and no triggers
+            set_trigger_status(NONE);
+            green();
+        }else{
+            set_armed(1); // Arm system and no triggers
+            set_trigger_status(NONE);
+            red();
+        }
+    }
 }
 
 /*
@@ -77,22 +96,28 @@ int arm_disarm_alarm(){
 
     // Arm the system if currently disarmed and not triggered, disarm the system if armed
     if(get_armed() || (!get_armed() && !get_triggered())){
-        set_armed(!get_armed());
 
-        log_arm_disarm_time();
 
-        if(get_armed()){
+        if(!get_armed()){ // If arming system
             arm_success_LCD();
             red();
             set_trigger_status(NONE);
+            cas_sysDelay(5);
+            set_armed(!get_armed());
+            log_arm_disarm_time();
 
         }else{
+            set_armed(!get_armed());
+            log_arm_disarm_time();
             sounder_off();
             disarm_success_LCD();
             green();
             set_trigger_status(NONE);
+            cas_sysDelay(2);
         }
-        cas_sysDelay(2);
+
+
+
         return 1;
     }
 

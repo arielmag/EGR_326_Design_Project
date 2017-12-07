@@ -11,6 +11,7 @@
 #include "RTC.h"
 #include "alarm.h"
 #include "motor.h"
+#include "sensors.h"
 
 int bufIdx, isSent;
 
@@ -60,7 +61,7 @@ void Init_bluetooth(){
     MAP_Interrupt_enableMaster();
 
     bufIdx=0;
-    isSent = 0;
+    isSent = 1;
 
 //    RTC_read();
 //    RTC_write();
@@ -136,7 +137,7 @@ int check_bluetooth(){
             //unsigned char RTC_registers[15]={0x11, 0x11, 0x11, 0x01, 0x11, 0x11, 0x11, 0};
 
             char print_date[27];
-            sprintf(print_date,"\nDATE: %02x/%02x/%02x %02x:%02x:%02x\n", RTC_registers[4], RTC_registers[5], RTC_registers[6], RTC_registers[2], RTC_registers[1], RTC_registers[0]);
+            sprintf(print_date,"\nDATE: %02x/%02x/%02x %02x:%02x:%02x\n", RTC_registers[5], RTC_registers[4], RTC_registers[6], RTC_registers[2], RTC_registers[1], RTC_registers[0]);
 
             strcat(print_all, print_date);
 
@@ -202,9 +203,14 @@ int check_bluetooth(){
                 }else{
                     char print[] = "\nALARM DISARMED\n\n";
                     strcat(print_all, print);
+
+                    // If disarming after a trigger
+                    if(get_trigger_status() != NONE){
+                        set_trigger_displayed(0);
+                    }
                 }
             }else{
-                char print[] = "\nALARM CANNOT BE DISARMED. CLEAR TRIGGERS AND TRY AGAIN.\n\n";
+                char print[] = "\nALARM CANNOT BE ARMED. CLEAR TRIGGERS AND TRY AGAIN.\n\n";
                 strcat(print_all, print);
             }
 

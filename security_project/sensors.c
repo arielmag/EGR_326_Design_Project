@@ -200,17 +200,18 @@ void PORT2_IRQHandler(void)
                 log_trigger_time(DOOR);
                 flashing_red();
 
-        }else if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
-                set_trigger_status(WINDOW);
-                log_trigger_time(WINDOW);
-                flashing_red();
-
-        }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
-            set_trigger_status(PRESENCE);
-            log_trigger_time(PRESENCE);
-            flashing_red();
-
         }
+//        if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
+//                set_trigger_status(WINDOW);
+//                log_trigger_time(WINDOW);
+//                flashing_red();
+//
+//        }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
+//            set_trigger_status(PRESENCE);
+//            log_trigger_time(PRESENCE);
+//            flashing_red();
+//
+//        }
     }
 }
 

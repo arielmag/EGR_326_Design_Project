@@ -83,9 +83,10 @@ char keypad_getkey()
                    go_home();
                }
                display_trigger(get_trigger_status());
-               if(check_bluetooth())
-                   go_home();
+
            }
+           if(check_bluetooth())
+               go_home();
 
        }while(1);
 
@@ -93,7 +94,7 @@ char keypad_getkey()
 
 int debounce(int row)
 {
-    static uint16_t State = 0;  // Current debounce status
+    static int State = 0;  // Current debounce status
     int select = 4; // Initialize as unused value for debugging
 
     if (row == 0x0E) select = 0;
@@ -101,8 +102,8 @@ int debounce(int row)
     if (row == 0x0B) select = 2;
     if (row == 0x07) select = 3;
 
-    State = (State << 1) | (P4IN & BIT(select))>>select | 0xf000;    // Read switch
-    return (State == 0xffff); // Return true if button released for 8 consecutive calls
+    State = (State << 1) | (P4IN & BIT(select))>>select | 0x00000;    // Read switch
+    return (State == 0xfffff); // Return true if button released for 8 consecutive calls
 }
 
 char check_pressed() // no debounce
@@ -151,10 +152,9 @@ char check_pressed() // no debounce
             go_home();
         }
         display_trigger(get_trigger_status());
-        if(check_bluetooth())
-            go_home();
 
     }
-
+    if(check_bluetooth())
+        go_home();
     return 0; // return 0 if nothing pressed
 }

@@ -6,7 +6,7 @@
 #include "timers.h"
 #include "LCD.h"
 #include "ST7735.h"
-#define LOCK_SPEED 2 // Speed that the door locks/unlocks
+#define LOCK_SPEED 5 // Speed that the door locks/unlocks
 
 int lock = 0;
 

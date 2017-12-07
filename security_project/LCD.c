@@ -45,9 +45,9 @@ void go_home(){
 
     while(check_pressed() == 0){
         display_home_screen_LCD();
-        display_trigger(get_trigger_status());
-        if(check_bluetooth())
-            go_home();
+//        display_trigger(get_trigger_status());
+//        if(check_bluetooth())
+//            go_home();
     }
 
     set_count(0);
@@ -75,7 +75,6 @@ void go_home(){
  */
 void display_menu(){
     display_menu_LCD();
-    init_LED2(); //TODO HOW to implement hall sensor to change LED on/off status?
 
     char menu = keypad_getkey();
     set_count(0);
@@ -132,7 +131,6 @@ void display_menu(){
 
             break;
 
-        // '*' to go back to home
         case HOME_KEY:
             go_home();
             break;

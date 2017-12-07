@@ -43,13 +43,13 @@ int main(void)
     init_LED2();
     SysTick_Init();             // Initialize the SysTick timer
     Init_LED();                 // Initialize LED 6.6 red, 6.7 green
-    Init_alarm();               // Initialize alarm
     init_pwm_lcd();             // Initialize pwm for driving LED back lighting
     init_WDT();                 // Initialize watchdog timer, 128KHz
     Init_solenoid();            // Initialize solenoid P5.1
     Init_bluetooth();
-
     Init_pushbutton();          // Initialize pushbutton P1.6
+    init_LED2();
+    Init_alarm();               // Initialize alarm
 
     get_clock();                // Get all clock speed, make sure this function is called at the end of initialization
 

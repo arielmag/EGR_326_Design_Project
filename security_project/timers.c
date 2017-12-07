@@ -121,10 +121,33 @@ void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
         count=0;
     }
 
-//    if(RTC_read_temperature() <= 110){
-//        trigger_LCD(TEMPERATURE);
-//        cas_sysDelay(2);
-//    }
+    // Make sure there are no triggers present already
+    if(get_trigger_status() == NONE){
+
+        // Check for temperature trigger
+        if(RTC_read_temperature() >= 110){
+            set_trigger_status(TEMPERATURE);
+            log_trigger_time(TEMPERATURE);
+            flashing_red();
+        }
+
+        // Only check door and window triggers if armed
+        if(get_armed()){
+            if(P2IN & BIT5){
+                set_trigger_status(DOOR);
+                log_trigger_time(DOOR);
+                flashing_red();
+
+            }
+            if(P2IN & BIT4){
+                set_trigger_status(WINDOW);
+                log_trigger_time(WINDOW);
+                flashing_red();
+            }
+        }
+
+    }
+
 
         if( get_trigger_status() != NONE && get_armed()) //every second, check if the system is triggered and armed
             {
