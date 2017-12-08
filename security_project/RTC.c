@@ -50,6 +50,7 @@ void I2C_init()
  * P6.5 SCL
  */
 void Init_RTC(){
+	temp_f = 0;
     I2C_init();
 }
 
@@ -119,7 +120,8 @@ float RTC_read_temperature()
     tUBYTE = MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
     tLBYTE = MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
 
-    return convertTemperature(tUBYTE,tLBYTE);
+	temp_f = convertTemperature(tUBYTE,tLBYTE);
+    return temp_f;
 }
 
 /*
@@ -153,6 +155,9 @@ float convertTemperature(uint8_t tUBYTE, uint8_t tLBYTE){
 
 void RTC_read() //EGR 326 lecture slide
 {
+    uint8_t tUBYTE = 0;
+    uint8_t tLBYTE = 0;
+    
     // Set Master in transmit mode
     MAP_I2C_setMode(EUSCI_B1_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
     // Wait for bus release, ready to write
@@ -173,4 +178,19 @@ void RTC_read() //EGR 326 lecture slide
     RTC_registers[4]=MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
     RTC_registers[5]=MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
     RTC_registers[6]=MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
+    
+    int i;
+    for(i=0; i<10; i++){
+    	MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
+	}
+	
+    // read from RTC registers (pointer auto increments after each read)
+    tUBYTE = MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
+    tLBYTE = MAP_I2C_masterReceiveSingleByte(EUSCI_B1_BASE);
+
+	temp_f = convertTemperature(tUBYTE,tLBYTE);
+}
+
+float get_temperature(){
+    return temp_f;
 }

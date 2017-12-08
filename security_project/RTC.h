@@ -16,5 +16,6 @@ void RTC_write();
 float RTC_read_temperature();
 float convertTemperature(uint8_t tUBYTE, uint8_t tLBYTE);
 void RTC_read();
-
+float get_temperature();
+static float temp_f;
 #endif

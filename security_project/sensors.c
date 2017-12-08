@@ -89,7 +89,12 @@ void check_sensors(){
 
         ST7735_DrawString(x, y+=1, "Temperature", textColor);
         char array[10];
-        sprintf(array, "%0.2f F", RTC_read_temperature());
+
+        float t = get_temperature();
+        if(t >= 80){
+            t *= 2.0;
+        }
+        sprintf(array, "%0.2f F", t);
         ST7735_DrawString(x+12, y, array, textColor);
 
         ST7735_DrawString(x, y+=1, "Presence", textColor);
@@ -195,23 +200,25 @@ void PORT2_IRQHandler(void)
     // If armed and not triggered, check for triggers
     if( get_trigger_status() == NONE && get_armed()){
 
-        if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
-                set_trigger_status(DOOR);
-                log_trigger_time(DOOR);
-                flashing_red();
-
-        }
+//        if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
+//                set_trigger_status(DOOR);
+//                log_trigger_time(DOOR);
+//                flashing_red();
+//
+//        }
 //        if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
 //                set_trigger_status(WINDOW);
 //                log_trigger_time(WINDOW);
 //                flashing_red();
 //
-//        }else if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
-//            set_trigger_status(PRESENCE);
-//            log_trigger_time(PRESENCE);
-//            flashing_red();
-//
 //        }
+
+        if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
+            set_trigger_status(PRESENCE);
+            log_trigger_time(PRESENCE);
+            flashing_red();
+
+        }
     }
 }
 
@@ -221,6 +228,7 @@ void green()
 //P2->OUT ^= BIT1;
     P6->OUT &=~BIT6;
     on_green();
+    sounder_off();
 }
 void red()
 {
@@ -248,12 +256,22 @@ void flashing_red(){
  */
 void display_trigger(int type){
     if(type != NONE){
+        if(type == TEMPERATURE)
+            set_temp_trig(1);
+
         set_trigger_displayed(1);
         trigger_LCD(type);
         keypad_getkey();
         enter_password();       // Prompt user to enter password
-        arm_disarm_alarm();
+
+        if(get_armed()){
+            arm_disarm_alarm();
+        }
+        set_armed(0);
+        sounder_off();
+        set_trigger_status(NONE);
         set_trigger_displayed(0);
+        green();
         display_trigger_log();
     }
 }

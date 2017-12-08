@@ -30,6 +30,10 @@ void Init_LCD(){
     ST7735_InitR(INITR_REDTAB);
 }
 
+static char armedArray[18];
+static char disarmedArray[21];
+
+
 /*
  * Display home screen and start system logic
  */
@@ -43,6 +47,10 @@ void go_home(){
     //clearScreen();
     get_trigger_status();
 
+    strcpy(armedArray, "ALARM IS ARMED  ");
+    strcpy(disarmedArray, "ALARM IS DISARMED  ");
+
+    update_scroll = 0;
     while(check_pressed() == 0){
         display_home_screen_LCD();
 //        display_trigger(get_trigger_status());
@@ -52,6 +60,7 @@ void go_home(){
 
     set_count(0);
     enter_password();       // Prompt user to enter password
+
 
     while(1){
         display_menu();         // Display the menu screen. Different options within
@@ -116,20 +125,20 @@ void display_menu(){
             setup_password();
             break;
 
-        //7  to play alarm for debug
-        case '7':
-
-            tone1();
-
-            break;
-        //8  to play buzzer for debug
-        case '8':
-            while(!check_pressed())
-             {
-                 buzz_solenoid();
-             }
-
-            break;
+//        //7  to play alarm for debug
+//        case '7':
+//
+//            tone1();
+//
+//            break;
+//        //8  to play buzzer for debug
+//        case '8':
+//            while(!check_pressed())
+//             {
+//                 buzz_solenoid();
+//             }
+//
+//            break;
 
         case HOME_KEY:
             go_home();
@@ -253,6 +262,14 @@ void printDateTimeStored_LCD(){
 
 }
 
+int get_update_scroll(){
+    return update_scroll;
+}
+
+void set_update_scroll(int x){
+    update_scroll = x;
+}
+
 /*
  * This function displays the home screen with the time, date,
  * alarm status, and temperature
@@ -266,7 +283,7 @@ void display_home_screen_LCD()
     int y=0;
     char str_date[20];
     char str_time[20];
-    char str_temperature[40];
+    char str_temperature[20];
 
     int i;
     for(i=0;i<20;i++){
@@ -275,41 +292,69 @@ void display_home_screen_LCD()
         str_temperature[i] = 0;
     }
 
-      // clearScreen();
-       RTC_read();
-//       char string1[]={'T', 'E', 'M','P'}; //Eventually display temperature information
-//       int i;
-//       int x=5;
-//       int y=20;
-//       for(i=0; i<4; i++)
-//       {
-//           ST7735_DrawChar(x+(i*20), y, string1[i], ST7735_Color565(180, 240, 250), 0, 2);
-//       }
        ST7735_DrawString2(0, y, "Security", textColor, bgColor);
        ST7735_DrawString2(0, y+=2, "System", textColor, bgColor);
 
        printDayLCD(RTC_registers[3]); //get day format Sun/Mon..
        printMonthLCD(RTC_registers[5]); //get month format Jan
 
-
-      // ST7735_FillScreen(0);
        sprintf(str_date, "%s. %s %x, 20%02x", return_char_day, return_char_month, RTC_registers[4] , RTC_registers[6]); //format string: day-month-year
-       //ST7735_DrawString(0, 3, "Date: ", ST7735_GREEN);
-       //ST7735_DrawString(0, 8, str_date, ST7735_GREEN);
        ST7735_DrawString_bg(2, y+=3, str_date, textColor, bgColor);
 
        sprintf(str_time,"%02x:%02x:%02x", RTC_registers[2], RTC_registers[1], RTC_registers[0]);
        ST7735_DrawString_bg(2, y+=2, str_time, textColor, bgColor);
 
-       sprintf(str_temperature, "Temp: %.2f F", RTC_read_temperature());
-       ST7735_DrawString_bg(2, y+=2, str_temperature, textColor, bgColor);
-
-       if(get_armed()){
-           ST7735_DrawString2(0, y+=3, "   ARMED   ", ST7735_BLACK, ST7735_RED);
-       }else{
-           ST7735_DrawString2(0, y+=3, "  DISARMED  ", ST7735_BLACK, ST7735_GREEN);
+       float t = get_temperature();
+       if(t >= 80){
+           t *= 2.0;
        }
 
+       sprintf(str_temperature, "Temp: %.2f F", get_temperature());
+       ST7735_DrawString_bg(2, y+=2, str_temperature, textColor, bgColor);
+
+       y+=3;
+
+       // x from 0 to 20
+
+//       char armedArray[22] = "THE SYSTEM IS ARMED   ";
+//       char disarmedArray[25] = "THE SYSTEM IS DISARMED  ";
+
+       if(update_scroll == 1){
+           if(get_armed()){
+               char temp = armedArray[0];
+               for(i=0;i<17;i++){
+                   armedArray[i] = armedArray[i+1];
+               }
+               armedArray[17] = temp;
+               set_update_scroll(0);
+
+           }else{
+               char temp = disarmedArray[0];
+               for(i=0;i<20;i++){
+                   disarmedArray[i] = disarmedArray[i+1];
+               }
+               disarmedArray[20] = temp;
+               set_update_scroll(0);
+           }
+       }
+
+       //ST7735_DrawCharS(x, y, char c, int16_t textColor, int16_t bgColor, uint8_t size)
+//
+//       if(get_armed()){
+//           ST7735_DrawString2(0, y, "   ARMED   ", ST7735_BLACK, ST7735_RED);
+//       }else{
+//           ST7735_DrawString2(0, y, "  DISARMED  ", ST7735_BLACK, ST7735_GREEN);
+//       }
+
+       if(get_armed()){
+           for(i=0;i<18;i++){
+               ST7735_DrawCharS(i*12, y*10, armedArray[i], ST7735_BLACK, ST7735_RED, 2);
+           }
+       }else{
+           for(i=0;i<20;i++){
+               ST7735_DrawCharS(i*12, y*10, disarmedArray[i], ST7735_BLACK, ST7735_GREEN, 2);
+           }
+       }
 }
 
 void print_temperature()
@@ -437,7 +482,7 @@ display_set_time_date();
 ST7735_DrawString(0,5,"Enter two digits for", ST7735_GREEN);
 ST7735_DrawString(0,6,"Month. Example:", ST7735_GREEN);
 ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
-
+reset_flag();
 //****************************************************************************************************************************************
 
     while(month_flag == 0){ //stay here unless flag is trigger, ck_valid will set mon. flag to 1 if it's valid input
@@ -709,7 +754,7 @@ ST7735_DrawString(0,7,"01->Jan / 12->Dec", ST7735_GREEN);
         {   display_set_time_date();
             ST7735_DrawString(0,++cur_row,"Invalid input",ST7735_RED);
             cas_sysDelay(1);
-            ST7735_DrawString(0,cur_row++,"Re-enter min",ST7735_RED);
+            ST7735_DrawString(0,cur_row++,"Re-enter sec",ST7735_RED);
             cas_sysDelay(1);
             clearScreen();
             display_set_time_date();
@@ -758,34 +803,34 @@ void clearScreen(){
 void ck_valid()
 { //Maximum calendar: 1 2 3 1 9 9  7  2 3 5   9    5    9
   //                  M M D D Y Y DOW H H min min  sec  sec
-    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12 && calendar[0]!='*' &&calendar[1]!='*')
+    if (((calendar[0] - 48) * 10 + (calendar[1] - 48)) <= 12 && calendar[0]!='*' &&calendar[1]!='*'&& calendar[0]!='#' &&calendar[1]!='#')
     {
         month_flag = 1; //valid
     }
-    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31&& calendar[2]!='*' &&calendar[3]!='*')
+    if (((calendar[2] - 48) * 10 + (calendar[3] - 48)) <= 31&& calendar[2]!='*' &&calendar[3]!='*'&& calendar[2]!='#' &&calendar[3]!='#')
     {
         day_flag = 1;
     }
 
-    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99 && calendar[4]!='*' &&calendar[5]!='*')
+    if (((calendar[4] - 48) * 10 + (calendar[5] - 48)) <= 99 && calendar[4]!='*' &&calendar[5]!='*'&& calendar[4]!='#' &&calendar[5]!='#')
     {
         year_flag = 1;
     }
-    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[6]!='*')
+    if (((calendar[6] - 48)) <= 7 && ((calendar[6]-48))>= 1&& calendar[6]!='*'&& calendar[6]!='#')
     {
         DOW_flag = 1;
     }
 
-    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[7]!='*' &&calendar[8]!='*')
+    if (((calendar[7] - 48) * 10 + (calendar[8] - 48)) < 24&& calendar[7]!='*' &&calendar[8]!='*'&& calendar[7]!='#' &&calendar[8]!='#')
     {
         hour_flag = 1;
     }
-    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60 && calendar[9]!='*' &&calendar[10]!='*')
+    if (((calendar[9] - 48) * 10 + (calendar[10] - 48)) < 60 && calendar[9]!='*' &&calendar[10]!='*'&& calendar[9]!='#' &&calendar[10]!='#')
     {
         min_flag = 1;
     }
 
-    if (((calendar[11] - 48) * 10 + (calendar[12] - 48)) < 60 && calendar[11]!='*' &&calendar[12]!='*')
+    if (((calendar[11] - 48) * 10 + (calendar[12] - 48)) < 60 && calendar[11]!='*' &&calendar[12]!='*'&& calendar[11]!='#' &&calendar[12]!='#')
     {
         sec_flag = 1;
     }

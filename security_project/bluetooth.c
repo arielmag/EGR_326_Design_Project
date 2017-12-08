@@ -80,6 +80,7 @@ int get_sent(){
 /* EUSCI A2 UART ISR - Echoes data back to PC host */
 void EUSCIA2_IRQHandler(void)
 {
+
     uint32_t status = MAP_UART_getEnabledInterruptStatus(EUSCI_A2_BASE);
 
     MAP_UART_clearInterruptFlag(EUSCI_A2_BASE, status);
@@ -109,6 +110,7 @@ void EUSCIA2_IRQHandler(void)
  * @return 1 keyword detected and screen changed, 0 no screen change
  */
 int check_bluetooth(){
+
     // Check if data was sent
     if(bufIdx > 2 && isSent == 0){
 
@@ -222,6 +224,8 @@ int check_bluetooth(){
             return 1;
         }
     }
+
+
 
     return 0;
 }

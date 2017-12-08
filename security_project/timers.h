@@ -12,5 +12,10 @@ void set_count(int value);
 int get_count();
 void get_clock(void);
 void init_WDT(void);
+//float get_temperature();
+void set_temp_trig(int status);
+
+//static float temperature;
+static int temp_trig;
 
 #endif

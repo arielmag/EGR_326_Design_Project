@@ -64,7 +64,6 @@ int main(void)
 
     // When system is set up
     while(1){
-
         go_home();
     }
 }

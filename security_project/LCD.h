@@ -24,7 +24,10 @@ void go_home();
 void display_menu();
 void print_temperature();
 void init_pwm_lcd();
+void set_loop(int x);
+int get_loop();
 
+static int update_scroll;
 char return_char_day[4];
 char return_char_month[4];
 int num_dates_stored;

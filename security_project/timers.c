@@ -81,6 +81,8 @@ void init_user_input_timer32(){
      /* Enabling interrupts */
      MAP_Interrupt_enableInterrupt(INT_T32_INT1);
      MAP_Interrupt_enableMaster();
+
+     set_temp_trig(0);
 }
 
 void get_clock(){
@@ -109,6 +111,17 @@ void init_WDT()
 
 }
 
+
+
+
+int get_temp_trig(){
+    return temp_trig;
+}
+
+void set_temp_trig(int status){
+    temp_trig = status;
+}
+
 void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
 {
     MAP_Timer32_clearInterruptFlag(TIMER32_BASE);
@@ -121,53 +134,62 @@ void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
         count=0;
     }
 
+    RTC_read();
+
+    //get_temperature();
+
+    // Check for temperature trigger
+    if(get_temperature() >= 90 && get_temp_trig() == 0){
+        set_trigger_status(TEMPERATURE);
+        log_trigger_time(TEMPERATURE);
+        flashing_red();
+        set_temp_trig(1);
+    }
+
+    if(get_temperature() < 90 && get_temp_trig() == 1){
+        set_temp_trig(0);
+    }
+
     // Make sure there are no triggers present already
     if(get_trigger_status() == NONE){
-
-        // Check for temperature trigger
-        if(RTC_read_temperature() >= 110){
-            set_trigger_status(TEMPERATURE);
-            log_trigger_time(TEMPERATURE);
-            flashing_red();
-        }
-
         // Only check door and window triggers if armed
         if(get_armed()){
             if(P2IN & BIT5){
                 set_trigger_status(DOOR);
                 log_trigger_time(DOOR);
                 flashing_red();
-
             }
+
             if(P2IN & BIT4){
                 set_trigger_status(WINDOW);
                 log_trigger_time(WINDOW);
                 flashing_red();
             }
+
         }
 
     }
 
 
-        if( get_trigger_status() != NONE && get_armed()) //every second, check if the system is triggered and armed
+    if( get_trigger_status() != NONE) //every second, check if the system is triggered and armed
+        {
+        P6->OUT &=~BIT7;
+        toggle_red(); //if it is triggered, and the system is armed. Toggle red LED
+
+             if (buzzer_flag)
             {
-
-            toggle_red(); //if it is triggered, and the system is armed. Toggle red LED
-
-                 if (buzzer_flag)
-                {
-                pwm_buzzer_high();
-                 buzzer_flag =0;
-                 }
-                 else
-                {
-                    pwm_buzzer_low();
-                    buzzer_flag =1;
-                }
-
+            pwm_buzzer_high();
+             buzzer_flag =0;
+             }
+             else
+            {
+                pwm_buzzer_low();
+                buzzer_flag =1;
             }
 
+        }
 
+    set_update_scroll(1);
 
     return;
 

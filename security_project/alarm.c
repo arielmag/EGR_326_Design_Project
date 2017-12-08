@@ -117,7 +117,6 @@ int arm_disarm_alarm(){
         }
 
 
-
         return 1;
     }
 
@@ -694,6 +693,8 @@ void display_log(){
                 display_trigger_log();
                 break;
 
+            case HOME_KEY:
+                go_home();
             // Enter key to return to menu
             case BACK_KEY:
                 display_menu();
