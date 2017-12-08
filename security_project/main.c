@@ -20,9 +20,6 @@
 #include "bluetooth.h"
 #include "LED.h"
 
-//extern volatile int user_timeout;
-//extern int count;
-
 void setup_system();
 
 static volatile uint32_t aclk, mclk, smclk, hsmclk, bclk;

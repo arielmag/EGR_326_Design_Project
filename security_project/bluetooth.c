@@ -13,38 +13,62 @@
 #include "motor.h"
 #include "sensors.h"
 
-int bufIdx, isSent;
+int buffer_index; // Current place in buffer
 
+/*
+ * Flag to indicate if new unprocessed data has been sent by phone to
+ * prevent responding to same command twice.
+ */
+int data_used;
+
+/*
+ * Message to send out
+ */
 char print_all[70];
+
+/*
+ * Used to store last 3 bytes of received data
+ */
 uint8_t read_data[3];
 
-volatile uint8_t receivedData = 0;
+volatile uint8_t received_data = 0;
+volatile uint8_t buffer[BUFFER_SIZE];
 
-volatile uint8_t U2RXData = 0;
-volatile uint8_t ESPbuffer[ESPbufSize];
-
+/* UART Configuration Parameter. These are the configuration parameters to
+ * make the eUSCI A UART module to operate with a 9600 baud rate. These
+ * values were calculated using the online calculator that TI provides
+ * at:
+ *http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
+ *
+ * Configured for a 9600 baud rate (specified by bluetooth module) and 3MHz
+ * SMCLK speed (default speed)
+ */
 const eUSCI_UART_Config uartConfig =
 {
-        EUSCI_A_UART_CLOCKSOURCE_SMCLK,       // SMCLK Clock Source at 12 MHz (divided down from high frequency crystal)
-        19,                                   // BRDIV (clock prescaler) = INT(((12000000/9600)=1250)/16)=78.125)=78
-        8,                                    // UCxBRF = INT([(1250/16)–INT(1250/16)] × 16))=2
-        0,                                    // UCxBRS = 0x10 = 8 (second modulation stage, from table on page 721)
-        EUSCI_A_UART_NO_PARITY,                  // No Parity
-        EUSCI_A_UART_LSB_FIRST,                  // LSB First
-        EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
-        EUSCI_A_UART_MODE,                       // UART mode
+        EUSCI_A_UART_CLOCKSOURCE_SMCLK,           // SMCLK Clock Source
+        19,                                       // BRDIV
+        8,                                        // UCxBRF
+        0,                                        // UCxBRS
+        EUSCI_A_UART_NO_PARITY,                   // No Parity
+        EUSCI_A_UART_LSB_FIRST,                   // LSB First
+        EUSCI_A_UART_ONE_STOP_BIT,                // One stop bit
+        EUSCI_A_UART_MODE,                        // UART mode
         EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
 };
 
+/*
+ * Initialize settings for bluetooth module
+ */
 void Init_bluetooth(){
     /* Selecting P1.2 and P1.3 in UART mode */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
              GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
 
-    // Changed to P3.2 and 3.3
+    /* Selecting P3.2 and P3.3 in UART mode */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
             GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
 
+    // Use LED on P1.0 to indicate when data is received. Switch off at start.
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
 
@@ -60,24 +84,15 @@ void Init_bluetooth(){
     //MAP_Interrupt_enableSleepOnIsrExit();
     MAP_Interrupt_enableMaster();
 
-    bufIdx=0;
-    isSent = 1;
+    // Start buffer index at beginning of array
+    buffer_index=0;
 
-//    RTC_read();
-//    RTC_write();
-//    RTC_write();
-//    RTC_read();
-}
 
-void set_sent(int x){
-    isSent = x;
-}
-
-int get_sent(){
-    return isSent;
+    data_used = 1;
 }
 
 /* EUSCI A2 UART ISR - Echoes data back to PC host */
+// Use UART2 because using P3.2 and P3.3 for RX and TX
 void EUSCIA2_IRQHandler(void)
 {
 
@@ -87,32 +102,36 @@ void EUSCIA2_IRQHandler(void)
 
     if(status & EUSCI_A_UART_RECEIVE_INTERRUPT)
     {
+        // Toggle LED to show data was received
         P1OUT ^= BIT0;
 
-        U2RXData = MAP_UART_receiveData(EUSCI_A2_BASE);
+        received_data = MAP_UART_receiveData(EUSCI_A2_BASE);
 
-        if(bufIdx>ESPbufSize-1) {
-            bufIdx=0;  // implement circular buffer to prevent overflow
+        // Restart buffer if reached maximum
+        if(buffer_index>BUFFER_SIZE-1) {
+            buffer_index=0;
         }
 
-        ESPbuffer[bufIdx++]= U2RXData; // put in circular buffer for program analysis
+        // Store data in buffer.
+        // Not using a buffer causes problems with data being received too quickly.
+        buffer[buffer_index++]= received_data;
 
-        MAP_UART_transmitData(EUSCI_A2_BASE, U2RXData);  // send byte out UART0 port
+        MAP_UART_transmitData(EUSCI_A2_BASE, received_data);  // send byte out UART2 port
 
-        isSent =0;
-
-
+        data_used = 0;
     }
 }
 
 /*
  * Check if a keyword was transmitted over bluetooth
  * @return 1 keyword detected and screen changed, 0 no screen change
+ *
+ * (need to change screen back to home if screen changed)
  */
 int check_bluetooth(){
 
     // Check if data was sent
-    if(bufIdx > 2 && isSent == 0){
+    if(buffer_index > 2 && data_used == 0){
 
         int i, j=2;
 
@@ -123,7 +142,7 @@ int check_bluetooth(){
 
         // Check last 3 characters transmitted
         for(i=0; i<3; i++){
-            read_data[j] = ESPbuffer[bufIdx-1-i];
+            read_data[j] = buffer[buffer_index-1-i];
             j--;
         }
 
@@ -135,15 +154,11 @@ int check_bluetooth(){
             RTC_read();
             RTC_read();
 
-            // Setting to Sunday, November 11, 2011 at 11:11:11
-            //unsigned char RTC_registers[15]={0x11, 0x11, 0x11, 0x01, 0x11, 0x11, 0x11, 0};
-
             char print_date[27];
             sprintf(print_date,"\nDATE: %02x/%02x/%02x %02x:%02x:%02x\n", RTC_registers[5], RTC_registers[4], RTC_registers[6], RTC_registers[2], RTC_registers[1], RTC_registers[0]);
 
             strcat(print_all, print_date);
 
-            //char print_arm_disarm[17];
             if(get_armed()){
                 char print_arm_disarm[] = "ALARM: ARMED\n";
                 strcat(print_all, print_arm_disarm);
@@ -164,7 +179,7 @@ int check_bluetooth(){
                 MAP_UART_transmitData(EUSCI_A2_BASE, print_all[i]);
             }
 
-            isSent = 1;
+            data_used = 1;
             return 0;
         }
 
@@ -190,7 +205,7 @@ int check_bluetooth(){
                 MAP_UART_transmitData(EUSCI_A2_BASE, print_all[i]);
             }
 
-            isSent = 1;
+            data_used = 1;
             return 1;
         }
 
@@ -220,12 +235,10 @@ int check_bluetooth(){
                 MAP_UART_transmitData(EUSCI_A2_BASE, print_all[i]);
             }
 
-            isSent = 1;
+            data_used = 1;
             return 1;
         }
     }
-
-
 
     return 0;
 }

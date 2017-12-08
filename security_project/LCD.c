@@ -125,21 +125,6 @@ void display_menu(){
             setup_password();
             break;
 
-//        //7  to play alarm for debug
-//        case '7':
-//
-//            tone1();
-//
-//            break;
-//        //8  to play buzzer for debug
-//        case '8':
-//            while(!check_pressed())
-//             {
-//                 buzz_solenoid();
-//             }
-//
-//            break;
-
         case HOME_KEY:
             go_home();
             break;
@@ -305,20 +290,13 @@ void display_home_screen_LCD()
        ST7735_DrawString_bg(2, y+=2, str_time, textColor, bgColor);
 
        float t = get_temperature();
-//       if(t >= 80){
-//           t *= 2.0;
-//       }
 
        sprintf(str_temperature, "Temp: %.2f F", get_temperature());
        ST7735_DrawString_bg(2, y+=2, str_temperature, textColor, bgColor);
 
        y+=3;
 
-       // x from 0 to 20
-
-//       char armedArray[22] = "THE SYSTEM IS ARMED   ";
-//       char disarmedArray[25] = "THE SYSTEM IS DISARMED  ";
-
+       // Shift armed/disarmed message arrays every second for scrolling text appearance
        if(update_scroll == 1){
            if(get_armed()){
                char temp = armedArray[0];
@@ -338,14 +316,7 @@ void display_home_screen_LCD()
            }
        }
 
-       //ST7735_DrawCharS(x, y, char c, int16_t textColor, int16_t bgColor, uint8_t size)
-//
-//       if(get_armed()){
-//           ST7735_DrawString2(0, y, "   ARMED   ", ST7735_BLACK, ST7735_RED);
-//       }else{
-//           ST7735_DrawString2(0, y, "  DISARMED  ", ST7735_BLACK, ST7735_GREEN);
-//       }
-
+       // Scrolling text for armed/disarmed
        if(get_armed()){
            for(i=0;i<18;i++){
                ST7735_DrawCharS(i*12, y*10, armedArray[i], ST7735_BLACK, ST7735_RED, 2);

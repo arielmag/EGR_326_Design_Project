@@ -103,7 +103,7 @@ int debounce(int row)
     if (row == 0x07) select = 3;
 
     State = (State << 1) | (P4IN & BIT(select))>>select | 0x00000;    // Read switch
-    return (State == 0xfffff); // Return true if button released for 8 consecutive calls
+    return (State == 0xfffff); // Return true if button released for consecutive calls
 }
 
 char check_pressed() // no debounce

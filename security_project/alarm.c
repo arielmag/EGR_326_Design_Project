@@ -49,7 +49,8 @@ char trigger_log[41];
 char data_to_store[86];
 
 /*
- * Initialize the alarm by setting the system to disarmed.
+ * Initialize the alarm. Set the system to armed/disarmed based
+ * on the previous setting from logs. Get the saved logs.
  */
 void Init_alarm(){
     P1SEL0 &= ~BIT1;

@@ -8,6 +8,7 @@
 #include "LED.h"
 #include "sensors.h"
 #include "buzzer.h"
+#include "LCD.h"
 
 //volatile int user_timeout = 0;
 extern volatile int count = 0;
@@ -139,14 +140,14 @@ void T32_INT1_IRQHandler(void) //idle state detector, trigger every second
     //get_temperature();
 
     // Check for temperature trigger
-    if(get_temperature() >= 90 && get_temp_trig() == 0){
+    if(get_temperature() >= 110 && get_temp_trig() == 0){
         set_trigger_status(TEMPERATURE);
         log_trigger_time(TEMPERATURE);
         flashing_red();
         set_temp_trig(1);
     }
 
-    if(get_temperature() < 90 && get_temp_trig() == 1){
+    if(get_temperature() < 110 && get_temp_trig() == 1){
         set_temp_trig(0);
     }
 

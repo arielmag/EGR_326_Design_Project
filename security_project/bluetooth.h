@@ -1,7 +1,7 @@
 #ifndef BLUETOOTH_H_
 #define BLUETOOTH_H_
 
-#define ESPbufSize 1024
+#define BUFFER_SIZE 100
 
 void Init_bluetooth();
 void set_sent(int x);

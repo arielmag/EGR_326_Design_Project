@@ -26,6 +26,7 @@ void print_temperature();
 void init_pwm_lcd();
 void set_loop(int x);
 int get_loop();
+void set_update_scroll(int x);
 
 static int update_scroll;
 char return_char_day[4];

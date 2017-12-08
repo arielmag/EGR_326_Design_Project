@@ -91,17 +91,13 @@ void check_sensors(){
         char array[10];
 
         float t = get_temperature();
-//        if(t >= 80){
-//            t *= 2.0;
-//        }
+
         sprintf(array, "%0.2f F", t);
         ST7735_DrawString(x+12, y, array, textColor);
 
         ST7735_DrawString(x, y+=1, "Presence", textColor);
         ST7735_DrawString(x+12, y, check_PIR() ? "DETECTED" : "NONE    ", textColor);
 
-//        ST7735_DrawString(x, y+=2, "hold any digit to", textColor);
-//        ST7735_DrawString(x, y+=1, "return to menu.", textColor);
          temp = check_pressed();
     }while( temp != BACK_KEY && temp !=HOME_KEY);
     if(temp == BACK_KEY)
@@ -125,10 +121,6 @@ void Init_PIR(){
     MAP_GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN7);
 
     set_trigger_displayed(0);
-
-//    P2SEL0 &= ~BIT(7);
-//    P2SEL1 &= ~BIT(7); //conf as GPIO
-//    P2DIR &= ~BIT(7); // make inputs
 }
 
 /*
@@ -197,22 +189,8 @@ void PORT2_IRQHandler(void)
     status = MAP_GPIO_getEnabledInterruptStatus(GPIO_PORT_P2);
     MAP_GPIO_clearInterruptFlag(GPIO_PORT_P2, status);
 
-    // If armed and not triggered, check for triggers
+    // If armed and not triggered, check for PIR trigger
     if( get_trigger_status() == NONE && get_armed()){
-
-//        if(status & GPIO_PIN5){ // if interrupt came from pin 2.5 (door)
-//                set_trigger_status(DOOR);
-//                log_trigger_time(DOOR);
-//                flashing_red();
-//
-//        }
-//        if(status & GPIO_PIN4){ // if interrupt came from pin 2.4 (window)
-//                set_trigger_status(WINDOW);
-//                log_trigger_time(WINDOW);
-//                flashing_red();
-//
-//        }
-
         if(status & GPIO_PIN7){ // if interrupt came from pin 2.7 (PIR)
             set_trigger_status(PRESENCE);
             log_trigger_time(PRESENCE);
