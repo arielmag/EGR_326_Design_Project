@@ -305,9 +305,9 @@ void display_home_screen_LCD()
        ST7735_DrawString_bg(2, y+=2, str_time, textColor, bgColor);
 
        float t = get_temperature();
-       if(t >= 80){
-           t *= 2.0;
-       }
+//       if(t >= 80){
+//           t *= 2.0;
+//       }
 
        sprintf(str_temperature, "Temp: %.2f F", get_temperature());
        ST7735_DrawString_bg(2, y+=2, str_temperature, textColor, bgColor);

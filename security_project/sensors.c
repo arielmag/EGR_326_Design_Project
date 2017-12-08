@@ -91,9 +91,9 @@ void check_sensors(){
         char array[10];
 
         float t = get_temperature();
-        if(t >= 80){
-            t *= 2.0;
-        }
+//        if(t >= 80){
+//            t *= 2.0;
+//        }
         sprintf(array, "%0.2f F", t);
         ST7735_DrawString(x+12, y, array, textColor);
 
